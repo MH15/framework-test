@@ -1,0 +1,9 @@
+<template>
+    <div id="a">text</div>
+</template>
+
+<style></style>
+
+<script>
+    alert('bb');
+</script>

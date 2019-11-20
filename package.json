@@ -1,0 +1,37 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "ava",
+    "build": "tsc --outDir build",
+    "run": "npm run build && node build/app.js",
+    "prepublish": "npm run build",
+    "flow": "flow"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@journeyapps/domparser": "^0.3.0",
+    "@types/node": "^12.12.11",
+    "dom-parser": "^0.1.6",
+    "ejs": "^2.7.2",
+    "less": "^3.10.3",
+    "md5": "^2.2.1",
+    "node-html-parser": "^1.1.16",
+    "node-sass": "^4.13.0",
+    "vue-sfc-descriptor-to-string": "^1.0.0",
+    "vue-template-compiler": "^2.6.10",
+    "ws": "^7.2.0",
+    "yargs": "^15.0.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.7.0",
+    "@babel/core": "^7.7.2",
+    "@babel/preset-flow": "^7.0.0",
+    "@babel/preset-typescript": "^7.7.2",
+    "ava": "^2.4.0",
+    "flow-bin": "^0.112.0"
+  }
+}
