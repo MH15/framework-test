@@ -1,8 +1,13 @@
-<template>
+<template include="included">
     <div id="a">text</div>
+    {{> included}}
 </template>
 
-<style></style>
+<style>
+    #a {
+        color: green;
+    }
+</style>
 
 <script>
     alert('bb');

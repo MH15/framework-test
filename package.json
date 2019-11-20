@@ -14,11 +14,13 @@
   "license": "ISC",
   "dependencies": {
     "@journeyapps/domparser": "^0.3.0",
+    "@types/mustache": "^0.8.32",
     "@types/node": "^12.12.11",
     "dom-parser": "^0.1.6",
     "ejs": "^2.7.2",
     "less": "^3.10.3",
     "md5": "^2.2.1",
+    "mustache": "^3.1.0",
     "node-html-parser": "^1.1.16",
     "node-sass": "^4.13.0",
     "vue-sfc-descriptor-to-string": "^1.0.0",
