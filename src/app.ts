@@ -20,20 +20,32 @@ const Mustache = require("mustache")
 
 
 
-const directory1 = join(__dirname, '..', 'dist')
-const directory2 = join(__dirname, '..', 'components')
+const DIR_DIST = join(__dirname, '..', 'dist')
+const DIR_SEARCH = join(__dirname, '..', 'components')
 
 
 let component = new Component(join(__dirname, '..', 'components', 'demo.component'))
 // console.log(component)
 
-let set = component.build(directory1, directory2)
-console.log(set)
+let buildSet = component.build(DIR_DIST, DIR_SEARCH)
+console.log(buildSet)
+
+
+
+let includes = {}
+let joinedStyles = ""
+let joinedScripts = ""
+for (let entry of buildSet) {
+    includes[entry] = readFileSync(join(DIR_DIST, "mustache", entry + ".mustache"), "utf8")
+    joinedStyles += readFileSync(join(DIR_DIST, "style", entry + ".css"), "utf8")
+    joinedScripts += readFileSync(join(DIR_DIST, "script", entry + ".js"), "utf8")
+}
 
 
 // TODO: a helper function to use buildSet to pass all needed templates into the mustache
-let rendered = Mustache.render(readFileSync(join(directory1, "mustache", "demo.mustache"), "utf8"), {}, {
-    included: readFileSync(join(directory1, "mustache", "included.mustache"), "utf8")
-})
+let rendered = Mustache.render(readFileSync(join(DIR_DIST, "mustache", "demo.mustache"), "utf8"), {}, includes)
+
+
+
 console.log(rendered)
-// console.log(component)
+

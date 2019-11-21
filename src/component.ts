@@ -47,8 +47,8 @@ class Component {
      */
     public build(buildPath: string, includePath: string): Set<string> {
         let result = ""
-        let buildItems = new Set<string>()
-        buildItems.add(this.name)
+        let buildSet = new Set<string>()
+        buildSet.add(this.name)
 
         // build mustache to dist/mustache folder
         let mustachePath = join(buildPath, "mustache", this.name + ".mustache")
@@ -74,17 +74,12 @@ class Component {
                 let c = new Component(refPath)
                 let smallSet = c.build(buildPath, includePath)
                 smallSet.forEach((s) => {
-                    buildItems.add(s)
+                    buildSet.add(s)
                 })
             })
         }
 
-
-
-
-
-        // do the ejs shit we did before
-        return buildItems
+        return buildSet
     }
 }
 

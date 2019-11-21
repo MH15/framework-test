@@ -1,12 +1,11 @@
-<template include="included,second">
+<template include="included">
     <div id="a">text</div>
     {{> included}}
-    {{> second}}
 </template>
 
 <style>
-    div {
-        background: pink;
+    #a {
+        color: green;
     }
 </style>
 
