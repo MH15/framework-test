@@ -7,3 +7,4 @@ function parseHTML(content) {
     return dom;
 }
 exports.parseHTML = parseHTML;
+//# sourceMappingURL=parser.js.map

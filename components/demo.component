@@ -1,5 +1,5 @@
 <template include="included,second">
-    <div id="a">text</div>
+    <div id="a">Kyle nkey schlong</div>
     {{> included}}
     {{> second}}
 </template>

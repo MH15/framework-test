@@ -24,6 +24,10 @@ class Component {
     public script: ComponentElement
 
     constructor(filepath: string) {
+        this.load(filepath)
+    }
+
+    public load(filepath: string): void {
         this.file = readFileSync(filepath, "utf8")
         this.name = parse(filepath).name
         let a = parseHTML(this.file)
@@ -71,7 +75,10 @@ class Component {
             referencedComponents.forEach(name => {
                 console.log(`Building component "${name}".`)
                 let refPath = join(includePath, name + ".component")
+                console.log("includePath", includePath)
+                console.log("refPath", refPath)
                 let c = new Component(refPath)
+                console.log("SHOULD NT HAPPED", c)
                 let smallSet = c.build(buildPath, includePath)
                 smallSet.forEach((s) => {
                     buildSet.add(s)

@@ -11,3 +11,6 @@ export function parseHTML(content: string): any {
     let dom = parser.parseFromString(content)
     return dom
 }
+
+
+

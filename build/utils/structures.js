@@ -15,3 +15,4 @@ class Stack {
     }
 }
 exports.Stack = Stack;
+//# sourceMappingURL=structures.js.map

@@ -8,6 +8,9 @@ const path_1 = require("path");
  */
 class Component {
     constructor(filepath) {
+        this.load(filepath);
+    }
+    load(filepath) {
         this.file = fs_1.readFileSync(filepath, "utf8");
         this.name = path_1.parse(filepath).name;
         let a = parser_1.parseHTML(this.file);
@@ -30,8 +33,8 @@ class Component {
      */
     build(buildPath, includePath) {
         let result = "";
-        let buildItems = new Set();
-        buildItems.add(this.name);
+        let buildSet = new Set();
+        buildSet.add(this.name);
         // build mustache to dist/mustache folder
         let mustachePath = path_1.join(buildPath, "mustache", this.name + ".mustache");
         fs_1.writeFileSync(mustachePath, this.template.body);
@@ -49,15 +52,18 @@ class Component {
             referencedComponents.forEach(name => {
                 console.log(`Building component "${name}".`);
                 let refPath = path_1.join(includePath, name + ".component");
+                console.log("includePath", includePath);
+                console.log("refPath", refPath);
                 let c = new Component(refPath);
+                console.log("SHOULD NT HAPPED", c);
                 let smallSet = c.build(buildPath, includePath);
                 smallSet.forEach((s) => {
-                    buildItems.add(s);
+                    buildSet.add(s);
                 });
             });
         }
-        // do the ejs shit we did before
-        return buildItems;
+        return buildSet;
     }
 }
 exports.Component = Component;
+//# sourceMappingURL=component.js.map
