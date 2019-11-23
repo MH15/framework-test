@@ -6,11 +6,18 @@ class Startup {
         return 0;
     }
 }
-Startup.main();
 const path_1 = require("path");
-const builder_1 = require("./builder");
-const DIR_OUT = path_1.join(__dirname, '..', 'dist');
-const DIR_SEARCH = path_1.join(__dirname, '..', 'components');
-const DIR_ROOT = path_1.join(__dirname, "..", "components", "demo.component");
-builder_1.buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT);
+/**
+ * Config
+ */
+const PROJECT = path_1.join(__dirname, "..");
+const server_1 = require("./server/server");
+const DIR_OUT = path_1.join(PROJECT, 'dist');
+const DIR_SEARCH = path_1.join(PROJECT, 'components');
+const DIR_ROOT = path_1.join(PROJECT, "components", "demo.component");
+const routes = require(path_1.join(PROJECT, 'config', 'routes.json'));
+// console.log(routes)
+// buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT)
+let server = new server_1.Server();
+server.start(8000);
 //# sourceMappingURL=app.js.map

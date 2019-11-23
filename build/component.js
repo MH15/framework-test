@@ -7,6 +7,10 @@ const path_1 = require("path");
  * A Single File Component.
  */
 class Component {
+    /**
+     * Create a new component instance from filepath.
+     * @param filepath path to a valid .component file
+     */
     constructor(filepath) {
         this.load(filepath);
     }
@@ -28,7 +32,7 @@ class Component {
         };
     }
     /**
-     * Build template, style, and scripts to directory
+     * Build template, style, and scripts to buildPath
      * @param buildPath the directory to build to
      */
     build(buildPath, includePath) {

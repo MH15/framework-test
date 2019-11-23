@@ -23,6 +23,10 @@ class Component {
     public style: ComponentElement
     public script: ComponentElement
 
+    /**
+     * Create a new component instance from filepath.
+     * @param filepath path to a valid .component file
+     */
     constructor(filepath: string) {
         this.load(filepath)
     }
@@ -46,7 +50,7 @@ class Component {
     }
 
     /**
-     * Build template, style, and scripts to directory
+     * Build template, style, and scripts to buildPath
      * @param buildPath the directory to build to
      */
     public build(buildPath: string, includePath: string): Set<string> {

@@ -5,19 +5,36 @@ class Startup {
     }
 }
 
-Startup.main();
+import { join } from "path"
+
+/**
+ * Config
+ */
+const PROJECT = join(__dirname, "..")
+
+// Startup.main();
 
 
 interface Template {
 
 }
 
-import { join } from "path"
+
+
 import { buildWatch } from './builder';
+import { Server } from "./server/server";
 
-const DIR_OUT = join(__dirname, '..', 'dist')
-const DIR_SEARCH = join(__dirname, '..', 'components')
+const DIR_OUT = join(PROJECT, 'dist')
+const DIR_SEARCH = join(PROJECT, 'components')
 
-const DIR_ROOT = join(__dirname, "..", "components", "demo.component")
+const DIR_ROOT = join(PROJECT, "components", "demo.component")
 
-buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT)
+
+const routes = require(join(PROJECT, 'config', 'routes.json'))
+// console.log(routes)
+
+
+// buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT)
+
+let server = new Server()
+server.start(8000)
