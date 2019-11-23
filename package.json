@@ -6,7 +6,7 @@
   "scripts": {
     "test": "ava",
     "build": "tsc --outDir build",
-    "run": "npm run build && node build/app.js",
+    "run": "npm run build && node app.js",
     "prepublish": "npm run build",
     "flow": "flow"
   },

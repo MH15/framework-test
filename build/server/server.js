@@ -7,22 +7,27 @@ const http = require("http");
 const url = require("url");
 const path = require("path");
 const { pathToRegexp, match, parse, compile } = require("path-to-regexp");
-const routes = require("../../config/routes.json");
+// const routes = require("../../config/routes.json")
 class Server {
-    constructor() {
-        this.server = http.createServer(this.handle);
+    constructor(controllerPath, routes) {
+        this.controllers = controllerPath;
+        this.routes = routes;
+        console.log("this outer", this);
+        this.server = http.createServer(this.handle.bind(this));
     }
     start(port) {
-        this.server.listen(port);
+        try {
+            this.server.listen(port);
+            console.log(`Server started on port ${port}.`);
+        }
+        catch (e) {
+            console.error("Error opening server on port", port);
+        }
     }
     stop() {
         this.server.close();
     }
     handle(req, res) {
-        // const parsedURL = parse(req.url)
-        // console.log(parsedURL)
-        // const sanitizePath = normalize(parsedURL.pathname).replace(/^(\.\.[\/\\])+/, '');
-        // console.log(sanitizePath)
         // parse URL
         const parsedUrl = url.parse(req.url);
         // extract URL path
@@ -30,22 +35,28 @@ class Server {
         // e.g curl --path-as-is http://localhost:9000/../fileInDanger.txt
         // by limiting the path to current directory only
         const sanitizedPath = path.normalize(parsedUrl.pathname).replace(/^(\.\.[\/\\])+/, '');
-        // let pathname = path.join(__dirname, "../..", "_build", type, name, sanitizePath);
-        // let pathname = path.join(__dirname, "../..", "_build", sanitizePath);
         console.log(`sp: ${sanitizedPath},`);
         let pathToMatch = path.parse(sanitizedPath);
-        routes.routes.forEach(route => {
+        let foundController = false;
+        console.log("ligma", this.routes);
+        this.routes.routes.forEach(route => {
             let matcher = match(route.path, { decode: decodeURIComponent });
             let paramaters = matcher(parsedUrl.pathname);
             if (paramaters) {
+                foundController = true;
+                console.log(paramaters.params);
                 console.log(`Should use controller '${route.controller}'.`);
+                let finder = route.controller.split('.');
+                let p = path.join(this.controllers, finder[0]);
+                let controller = require(p)[finder[1]];
+                console.log(controller);
+                controller(req, res, paramaters.params);
+                return;
             }
         });
-        let k = [];
-        let m = match("/test/:id", { decode: decodeURIComponent });
-        console.log(sanitizedPath, parsedUrl.pathname);
-        console.log(m(parsedUrl.pathname));
-        console.log(m("/test/a"));
+        if (!foundController) {
+            console.error("404 bitch");
+        }
         res.end(JSON.stringify(parsedUrl));
     }
 }

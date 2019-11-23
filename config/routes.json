@@ -3,7 +3,7 @@
         {
             "method": "GET",
             "path": "/test",
-            "controller": "Test"
+            "controller": "Test.index"
         },
         {
             "method": "POST",
@@ -13,7 +13,7 @@
         {
             "method": "GET",
             "path": "/",
-            "controller": "Home"
+            "controller": "Home.index"
         }
     ]
 }

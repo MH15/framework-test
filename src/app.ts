@@ -12,14 +12,6 @@ import { join } from "path"
  */
 const PROJECT = join(__dirname, "..")
 
-// Startup.main();
-
-
-interface Template {
-
-}
-
-
 
 import { buildWatch } from './builder';
 import { Server } from "./server/server";
@@ -36,5 +28,21 @@ const routes = require(join(PROJECT, 'config', 'routes.json'))
 
 // buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT)
 
-let server = new Server()
-server.start(8000)
+class Framework {
+    public appRoot: string
+    private server: Server
+    constructor(appRoot: string) {
+        this.appRoot = appRoot
+    }
+    // TODO: build
+    // TODO: buildWatch
+    serve(port: number) {
+        let routes = require(join(this.appRoot, "config", "routes.json"))
+        console.log("TIT")
+        console.log(routes)
+        this.server = new Server(join(this.appRoot, "controllers"), routes)
+        this.server.start(port)
+    }
+}
+
+module.exports = Framework

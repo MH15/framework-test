@@ -18,6 +18,19 @@ const DIR_ROOT = path_1.join(PROJECT, "components", "demo.component");
 const routes = require(path_1.join(PROJECT, 'config', 'routes.json'));
 // console.log(routes)
 // buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT)
-let server = new server_1.Server();
-server.start(8000);
+class Framework {
+    constructor(appRoot) {
+        this.appRoot = appRoot;
+    }
+    // TODO: build
+    // TODO: buildWatch
+    serve(port) {
+        let routes = require(path_1.join(this.appRoot, "config", "routes.json"));
+        console.log("TIT");
+        console.log(routes);
+        this.server = new server_1.Server(path_1.join(this.appRoot, "controllers"), routes);
+        this.server.start(port);
+    }
+}
+module.exports = Framework;
 //# sourceMappingURL=app.js.map
