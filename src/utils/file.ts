@@ -1,5 +1,5 @@
 
-import { watch } from "fs"
+import { watch, existsSync } from "fs"
 /**
  * Call the cb Function each time the file at path is changed.
  * @param {String} path 
@@ -20,4 +20,12 @@ import { watch } from "fs"
 // }
 
 
-export { watch }
+function fileExists(path: string) {
+    if (!existsSync(path)) {
+        return true
+    }
+    return false
+}
+
+
+export { watch, fileExists }

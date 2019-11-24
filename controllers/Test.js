@@ -5,5 +5,5 @@ module.exports = {
 
 
 function index(req, res) {
-    res.end("tit")
+    fra.render(res, "included")
 }

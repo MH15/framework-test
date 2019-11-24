@@ -20,11 +20,31 @@ function buildAll(component, dirOut, dirInclude) {
         joinedStyles += fs_1.readFileSync(path_1.join(dirOut, "style", entry + ".css"), "utf8");
         joinedScripts += fs_1.readFileSync(path_1.join(dirOut, "script", entry + ".js"), "utf8");
     }
-    let rendered = Mustache.render(fs_1.readFileSync(path_1.join(dirOut, "mustache", "demo.mustache"), "utf8"), {}, includes);
+    let rendered = Mustache.render(fs_1.readFileSync(path_1.join(dirOut, "mustache", component.name + ".mustache"), "utf8"), {}, includes);
     let develop = `<html><head><title>Test</title></head><body>${rendered}<style>${joinedStyles}</style><script>${joinedScripts}</script></body></html>`;
     fs_1.writeFileSync(path_1.join(dirOut, "develop", "index.html"), develop);
+    component.buildSet = buildSet;
     return buildSet;
 }
+exports.buildAll = buildAll;
+function combine(component, dirOut, dirSearch) {
+    // Build component files
+    // Combine and serve
+    console.log(component.buildSet);
+    let includes = {};
+    let joinedStyles = "";
+    let joinedScripts = "";
+    for (let entry of component.buildSet) {
+        includes[entry] = fs_1.readFileSync(path_1.join(dirOut, "mustache", entry + ".mustache"), "utf8");
+        joinedStyles += fs_1.readFileSync(path_1.join(dirOut, "style", entry + ".css"), "utf8");
+        joinedScripts += fs_1.readFileSync(path_1.join(dirOut, "script", entry + ".js"), "utf8");
+    }
+    let rendered = Mustache.render(fs_1.readFileSync(path_1.join(dirOut, "mustache", component.name + ".mustache"), "utf8"), {}, includes);
+    let develop = `<html><head><title>Test</title></head><body>${rendered}<style>${joinedStyles}</style><script>${joinedScripts}</script></body></html>`;
+    return develop;
+    // writeFileSync(join(dirOut, "develop", "index.html"), develop)
+}
+exports.combine = combine;
 /**
  * Watch for changes in any of the component files. If the component that has
  * changed included by the component under build, build all included components.

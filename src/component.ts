@@ -1,15 +1,17 @@
 
-import { readFileSync, writeFileSync } from "fs"
+import { readFileSync, writeFileSync, mkdirSync } from "fs"
 import { parseHTML } from './utils/parser';
 
 import { join, parse } from "path";
 import { Stack } from "./utils/structures";
+const sass = require('node-sass')
 
 
 
 interface ComponentElement {
     dom: HTMLElement,
     body: string,
+    css?: string
 }
 
 
@@ -22,6 +24,7 @@ class Component {
     public template: ComponentElement
     public style: ComponentElement
     public script: ComponentElement
+    public buildSet: Set<string>
 
     /**
      * Create a new component instance from filepath.
@@ -41,7 +44,8 @@ class Component {
         }
         this.style = {
             dom: a.getElementsByTagName("style")[0],
-            body: a.getElementsByTagName("style")[0].innerHTML
+            body: a.getElementsByTagName("style")[0].innerHTML,
+            css: ""
         }
         this.script = {
             dom: a.getElementsByTagName("script")[0],
@@ -55,8 +59,11 @@ class Component {
      */
     public build(buildPath: string, includePath: string): Set<string> {
         let result = ""
-        let buildSet = new Set<string>()
-        buildSet.add(this.name)
+        this.buildSet = new Set<string>()
+        this.buildSet.add(this.name)
+        mkdirSync(join(buildPath, "mustache"), { recursive: true })
+        mkdirSync(join(buildPath, "style"), { recursive: true })
+        mkdirSync(join(buildPath, "script"), { recursive: true })
 
         // build mustache to dist/mustache folder
         let mustachePath = join(buildPath, "mustache", this.name + ".mustache")
@@ -64,7 +71,8 @@ class Component {
 
         // build style to dist/style folder
         let stylePath = join(buildPath, "style", this.name + ".css")
-        writeFileSync(stylePath, this.style.body)
+        this.style.css = compileStyles(this.style)
+        writeFileSync(stylePath, this.style.css)
 
         // build script to dist/style folder
         let scriptPath = join(buildPath, "script", this.name + ".js")
@@ -75,24 +83,44 @@ class Component {
         let r = this.template.dom.getAttribute("include")
         if (r) {
             let referencedComponents = this.template.dom.getAttribute("include").split(",")
-            console.log(referencedComponents)
             referencedComponents.forEach(name => {
-                console.log(`Building component "${name}".`)
+                // console.log(`Building component "${name}".`)
                 let refPath = join(includePath, name + ".component")
-                console.log("includePath", includePath)
-                console.log("refPath", refPath)
+                // console.log("includePath", includePath)
+                // console.log("refPath", refPath)
                 let c = new Component(refPath)
-                console.log("SHOULD NT HAPPED", c)
                 let smallSet = c.build(buildPath, includePath)
                 smallSet.forEach((s) => {
-                    buildSet.add(s)
+                    this.buildSet.add(s)
                 })
             })
         }
-
-        return buildSet
+        return this.buildSet
     }
 }
 
+
+/**
+* Compile styles using the correct preprocessor.
+* @param {Node} style the DOM Node
+*/
+function compileStyles(style: ComponentElement): string {
+    let styleLang = style.dom.getAttribute("lang") || "css"
+    let styleResult;
+    switch (styleLang) {
+        case "sass":
+            styleResult = sass.renderSync({
+                data: style
+            }).css.toString()
+            break
+        case "less":
+            // TODO: implement less
+            break
+        default:
+            styleResult = style
+            break
+    }
+    return styleResult
+}
 
 export { Component }

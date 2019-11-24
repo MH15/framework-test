@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = require("fs");
 const parser_1 = require("./utils/parser");
 const path_1 = require("path");
+const sass = require('node-sass');
 /**
  * A Single File Component.
  */
@@ -24,7 +25,8 @@ class Component {
         };
         this.style = {
             dom: a.getElementsByTagName("style")[0],
-            body: a.getElementsByTagName("style")[0].innerHTML
+            body: a.getElementsByTagName("style")[0].innerHTML,
+            css: ""
         };
         this.script = {
             dom: a.getElementsByTagName("script")[0],
@@ -37,14 +39,18 @@ class Component {
      */
     build(buildPath, includePath) {
         let result = "";
-        let buildSet = new Set();
-        buildSet.add(this.name);
+        this.buildSet = new Set();
+        this.buildSet.add(this.name);
+        fs_1.mkdirSync(path_1.join(buildPath, "mustache"), { recursive: true });
+        fs_1.mkdirSync(path_1.join(buildPath, "style"), { recursive: true });
+        fs_1.mkdirSync(path_1.join(buildPath, "script"), { recursive: true });
         // build mustache to dist/mustache folder
         let mustachePath = path_1.join(buildPath, "mustache", this.name + ".mustache");
         fs_1.writeFileSync(mustachePath, this.template.body);
         // build style to dist/style folder
         let stylePath = path_1.join(buildPath, "style", this.name + ".css");
-        fs_1.writeFileSync(stylePath, this.style.body);
+        this.style.css = compileStyles(this.style);
+        fs_1.writeFileSync(stylePath, this.style.css);
         // build script to dist/style folder
         let scriptPath = path_1.join(buildPath, "script", this.name + ".js");
         fs_1.writeFileSync(scriptPath, this.script.body);
@@ -52,22 +58,42 @@ class Component {
         let r = this.template.dom.getAttribute("include");
         if (r) {
             let referencedComponents = this.template.dom.getAttribute("include").split(",");
-            console.log(referencedComponents);
             referencedComponents.forEach(name => {
-                console.log(`Building component "${name}".`);
+                // console.log(`Building component "${name}".`)
                 let refPath = path_1.join(includePath, name + ".component");
-                console.log("includePath", includePath);
-                console.log("refPath", refPath);
+                // console.log("includePath", includePath)
+                // console.log("refPath", refPath)
                 let c = new Component(refPath);
-                console.log("SHOULD NT HAPPED", c);
                 let smallSet = c.build(buildPath, includePath);
                 smallSet.forEach((s) => {
-                    buildSet.add(s);
+                    this.buildSet.add(s);
                 });
             });
         }
-        return buildSet;
+        return this.buildSet;
     }
 }
 exports.Component = Component;
+/**
+* Compile styles using the correct preprocessor.
+* @param {Node} style the DOM Node
+*/
+function compileStyles(style) {
+    let styleLang = style.dom.getAttribute("lang") || "css";
+    let styleResult;
+    switch (styleLang) {
+        case "sass":
+            styleResult = sass.renderSync({
+                data: style
+            }).css.toString();
+            break;
+        case "less":
+            // TODO: implement less
+            break;
+        default:
+            styleResult = style;
+            break;
+    }
+    return styleResult;
+}
 //# sourceMappingURL=component.js.map
