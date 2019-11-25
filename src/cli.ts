@@ -20,6 +20,7 @@ let component = `<template></template>
 
 <script></script>
 `
+var copydir = require('copy-dir');
 
 
 program.version('0.0.1')
@@ -27,13 +28,9 @@ program.version('0.0.1')
     .command('init')
     .description('Initiate a new project.')
     .action(() => {
-        let dirs = [
-            join(baseDir, 'components'),
-            join(baseDir, 'controllers'),
-            join(baseDir, 'config'),
-            join(baseDir, 'dist')
-        ]
-        makeDirs(dirs)
+        console.log("Creating all default files...")
+        copydir.sync(join(baseDir, 'default'), baseDir)
+        console.log("   Done.")
         // TODO: make the rest of the default files
     })
 
@@ -60,6 +57,7 @@ program.command('develop <name>')
         const DIR_SEARCH = join(baseDir, 'components')
 
         const DIR_ROOT = join(baseDir, "components", `${name}.component`)
+        console.log("DIR_ROOT", DIR_ROOT)
         const DEVELOP_ROOT = join(baseDir, "dist", "develop")
 
 

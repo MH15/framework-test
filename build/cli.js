@@ -12,7 +12,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = require("path");
 const fs_1 = require("fs");
-const file_1 = require("./utils/file");
 const builder_1 = require("./builder");
 const live_server_1 = require("./server/live-server");
 const WebSocket = require("ws");
@@ -25,18 +24,15 @@ let component = `<template></template>
 
 <script></script>
 `;
+var copydir = require('copy-dir');
 program.version('0.0.1')
     // .option('-v, --version', )
     .command('init')
     .description('Initiate a new project.')
     .action(() => {
-    let dirs = [
-        path_1.join(baseDir, 'components'),
-        path_1.join(baseDir, 'controllers'),
-        path_1.join(baseDir, 'config'),
-        path_1.join(baseDir, 'dist')
-    ];
-    file_1.makeDirs(dirs);
+    console.log("Creating all default files...");
+    copydir.sync(path_1.join(baseDir, 'default'), baseDir);
+    console.log("   Done.");
     // TODO: make the rest of the default files
 });
 program.command('create <type> <name>')
@@ -61,6 +57,7 @@ program.command('develop <name>')
     const DIR_OUT = path_1.join(baseDir, 'dist');
     const DIR_SEARCH = path_1.join(baseDir, 'components');
     const DIR_ROOT = path_1.join(baseDir, "components", `${name}.component`);
+    console.log("DIR_ROOT", DIR_ROOT);
     const DEVELOP_ROOT = path_1.join(baseDir, "dist", "develop");
     // TODO: combine LiveServer and WebSocketController into one class that extends Server
     let liveServer = new live_server_1.LiveServer(DEVELOP_ROOT);

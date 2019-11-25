@@ -1,0 +1,15 @@
+<template include="second">
+    <h1>Home</h1>
+
+    {{> second}}
+</template>
+
+<style lang="scss">
+    h1 {
+        background: orange;
+    }
+</style>
+
+<script>
+    console.log("suck")
+</script>
