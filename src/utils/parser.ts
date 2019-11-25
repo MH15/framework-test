@@ -1,8 +1,6 @@
 
 
-import { readFileSync, writeFileSync } from "fs"
 
-import { parse } from 'node-html-parser';
 
 const DomParser = require('dom-parser')
 const parser = new DomParser()

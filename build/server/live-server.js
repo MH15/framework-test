@@ -82,10 +82,9 @@ class WebSocketController {
         this.port = port;
         this.socket = new WebSocket.Server({ port: port });
         this.socket.on('connection', function (ws) {
-            console.log("socket setup", this.socket);
             this.wss = ws;
             ws.on('message', message => {
-                console.log(`Received message => ${message}`);
+                // console.log(`Received message => ${message}`)
             });
             ws.send('ho!');
         });

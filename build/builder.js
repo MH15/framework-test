@@ -53,12 +53,9 @@ function buildWatch(dirOut, dirInclude, pathRoot, wss) {
         ignoreInitial: true
     }).on('all', (event, path) => {
         if (buildSetInitial.has(path_1.parse(path).name)) {
-            console.log("BEFORE");
             root.load(pathRoot);
-            console.log("AFTER");
             buildSetInitial = buildAll(root, dirOut, dirInclude);
         }
-        console.log(wss);
         wss.send('reload');
     });
 }

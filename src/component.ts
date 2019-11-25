@@ -3,7 +3,6 @@ import { readFileSync, writeFileSync, mkdirSync } from "fs"
 import { parseHTML } from './utils/parser';
 
 import { join, parse } from "path";
-import { Stack } from "./utils/structures";
 const sass = require('node-sass')
 
 

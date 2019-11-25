@@ -15,10 +15,6 @@ const builder_1 = require("./builder");
 const server_1 = require("./server/server");
 const fs_1 = require("fs");
 const component_1 = require("./component");
-const DIR_OUT = path_1.join(PROJECT, 'dist');
-const DIR_SEARCH = path_1.join(PROJECT, 'components');
-const DIR_ROOT = path_1.join(PROJECT, "components", "demo.component");
-const routes = require(path_1.join(PROJECT, 'config', 'routes.json'));
 // console.log(routes)
 // buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT)
 class Framework {

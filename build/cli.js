@@ -71,13 +71,12 @@ program.command('develop <name>')
     let connection;
     wss.on('connection', (ws) => {
         ws.on('message', message => {
-            console.log(`Received message => ${message}`);
+            // console.log(`Received message => ${message}`)
         });
         ws.send('ho!');
         connection = ws;
         builder_1.buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT, connection);
     });
-    console.log("TESTITES", JSON.stringify(connection));
 }));
 program.parse(process.argv);
 //# sourceMappingURL=cli.js.map
