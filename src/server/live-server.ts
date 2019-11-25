@@ -103,7 +103,7 @@ export class WebSocketController {
         this.socket.on('connection', function (ws: any) {
             this.wss = ws
             ws.on('message', message => {
-                console.log(`Received message => ${message}`)
+                // console.log(`Received message => ${message}`)
             })
             ws.send('ho!')
         })

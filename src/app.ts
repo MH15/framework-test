@@ -20,13 +20,8 @@ import { fileExists } from "./utils/file";
 import { readFileSync, existsSync, readdirSync } from 'fs';
 import { Component } from "./component";
 
-const DIR_OUT = join(PROJECT, 'dist')
-const DIR_SEARCH = join(PROJECT, 'components')
-
-const DIR_ROOT = join(PROJECT, "components", "demo.component")
 
 
-const routes = require(join(PROJECT, 'config', 'routes.json'))
 // console.log(routes)
 
 

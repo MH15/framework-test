@@ -5,6 +5,7 @@ import { mkdirSync, writeFileSync } from "fs";
 import { makeDirs } from "./utils/file";
 import { buildWatch } from "./builder";
 import { LiveServer, WebSocketController } from './server/live-server';
+const WebSocket = require("ws")
 
 const commander = require('commander');
 const program = new commander.Command();
@@ -62,21 +63,25 @@ program.command('develop <name>')
         const DEVELOP_ROOT = join(baseDir, "dist", "develop")
 
 
-
+        // TODO: combine LiveServer and WebSocketController into one class that extends Server
         let liveServer = new LiveServer(DEVELOP_ROOT)
         await liveServer.start(8081)
 
-        let wss = new WebSocketController(8089)
-        // wss.start()
+        // let wss = new WebSocketController(8089)
+        // console.log("SUCCCC", wss.socket)
 
+        const wss = new WebSocket.Server({ port: 8089 })
+        let connection
+        wss.on('connection', (ws) => {
+            ws.on('message', message => {
+                // console.log(`Received message => ${message}`)
+            })
+            ws.send('ho!')
+            connection = ws
+            buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT, connection)
 
-        console.log(wss)
+        });
 
-        // liveServer.restart(liveServer.wss)
-        buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT, wss)
-
-        console.log("MAYBE BEFOREY")
-        // liveServer.startSocket()
 
     })
 

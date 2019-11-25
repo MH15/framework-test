@@ -52,10 +52,8 @@ export function combine(component: Component, dirOut: string, dirSearch: string)
  * @param dirInclude the directory to search for included components in 
  * @param pathRoot the path to the component
  */
-export function buildWatch(dirOut: string, dirInclude: string, pathRoot: string, wss: WebSocketController) {
-    console.log("pathRoot", pathRoot)
+export function buildWatch(dirOut: string, dirInclude: string, pathRoot: string, wss: WebSocket) {
     let root = new Component(pathRoot)
-    console.error("shouldnt see this fohasbc")
 
     let buildSetInitial = buildAll(root, dirOut, dirInclude)
 
@@ -63,14 +61,10 @@ export function buildWatch(dirOut: string, dirInclude: string, pathRoot: string,
         ignoreInitial: true
     }).on('all', (event, path) => {
         if (buildSetInitial.has(parse(path).name)) {
-            console.log("BEFORE")
             root.load(pathRoot)
-            console.log("AFTER")
             buildSetInitial = buildAll(root, dirOut, dirInclude)
         }
-        // console.log(event, path);
-        console.log(wss.socket.wss.send)
-        wss.socket.wss.send('reload')
+        wss.send('reload')
     });
 
 }

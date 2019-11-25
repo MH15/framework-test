@@ -15,6 +15,7 @@ const fs_1 = require("fs");
 const file_1 = require("./utils/file");
 const builder_1 = require("./builder");
 const live_server_1 = require("./server/live-server");
+const WebSocket = require("ws");
 const commander = require('commander');
 const program = new commander.Command();
 let baseDir = process.cwd();
@@ -61,15 +62,22 @@ program.command('develop <name>')
     const DIR_SEARCH = path_1.join(baseDir, 'components');
     const DIR_ROOT = path_1.join(baseDir, "components", `${name}.component`);
     const DEVELOP_ROOT = path_1.join(baseDir, "dist", "develop");
+    // TODO: combine LiveServer and WebSocketController into one class that extends Server
     let liveServer = new live_server_1.LiveServer(DEVELOP_ROOT);
     yield liveServer.start(8081);
-    let wss = new live_server_1.WebSocketController(8089);
-    // wss.start()
-    console.log(wss);
-    // liveServer.restart(liveServer.wss)
-    builder_1.buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT, wss);
-    console.log("MAYBE BEFOREY");
-    // liveServer.startSocket()
+    // let wss = new WebSocketController(8089)
+    // console.log("SUCCCC", wss.socket)
+    const wss = new WebSocket.Server({ port: 8089 });
+    let connection;
+    wss.on('connection', (ws) => {
+        ws.on('message', message => {
+            console.log(`Received message => ${message}`);
+        });
+        ws.send('ho!');
+        connection = ws;
+        builder_1.buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT, connection);
+    });
+    console.log("TESTITES", JSON.stringify(connection));
 }));
 program.parse(process.argv);
 //# sourceMappingURL=cli.js.map

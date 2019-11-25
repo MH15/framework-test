@@ -47,9 +47,7 @@ exports.combine = combine;
  * @param pathRoot the path to the component
  */
 function buildWatch(dirOut, dirInclude, pathRoot, wss) {
-    console.log("pathRoot", pathRoot);
     let root = new component_1.Component(pathRoot);
-    console.error("shouldnt see this fohasbc");
     let buildSetInitial = buildAll(root, dirOut, dirInclude);
     chokidar.watch(dirInclude, {
         ignoreInitial: true
@@ -60,9 +58,8 @@ function buildWatch(dirOut, dirInclude, pathRoot, wss) {
             console.log("AFTER");
             buildSetInitial = buildAll(root, dirOut, dirInclude);
         }
-        // console.log(event, path);
-        console.log(wss.socket.wss.send);
-        wss.socket.wss.send('reload');
+        console.log(wss);
+        wss.send('reload');
     });
 }
 exports.buildWatch = buildWatch;

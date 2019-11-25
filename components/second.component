@@ -1,9 +1,14 @@
 <template include="included">
     <div id="a">yartersi</div>
+    <h1>Other Styling</h1>
     {{> included}}
 </template>
 
 <style>
+    h1 {
+        background: plum;
+    }
+
     #a {
         color: plum;
     }

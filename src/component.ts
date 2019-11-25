@@ -108,16 +108,16 @@ function compileStyles(style: ComponentElement): string {
     let styleLang = style.dom.getAttribute("lang") || "css"
     let styleResult;
     switch (styleLang) {
-        case "sass":
+        case "scss":
             styleResult = sass.renderSync({
-                data: style
+                data: style.body
             }).css.toString()
             break
         case "less":
             // TODO: implement less
             break
         default:
-            styleResult = style
+            styleResult = style.body
             break
     }
     return styleResult

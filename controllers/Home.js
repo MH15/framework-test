@@ -9,5 +9,5 @@ module.exports = {
 const { renderComponent } = require("../build/app")
 
 function index(req, res) {
-    fra.render(res, "demo")
+    fra.render(res, "home")
 }
