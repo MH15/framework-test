@@ -29,8 +29,9 @@ h1 {
 <script></script>
 `;
 var copydir = require('copy-dir');
-program.version('0.0.1')
-    // .option('-v, --version', )
+const version = require('../package.json').version;
+program.version(version)
+    .option('-v, --version')
     .command('init')
     .description('Initiate a new project.')
     .action(() => {
