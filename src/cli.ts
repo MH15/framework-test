@@ -29,7 +29,7 @@ program.version('0.0.1')
     .description('Initiate a new project.')
     .action(() => {
         console.log("Creating all default files...")
-        copydir.sync(join(baseDir, 'default'), baseDir)
+        copydir.sync(join(__dirname, '..', 'default'), baseDir)
         console.log("   Done.")
         // TODO: make the rest of the default files
     })
