@@ -44,7 +44,6 @@ program.command('create <type> <name>')
         switch (type.toLowerCase()) {
             case 'component':
                 let dirComponents = join(baseDir, 'components')
-                console.log(dirComponents)
                 mkdirSync(dirComponents, { recursive: true })
                 writeFileSync(join(dirComponents, name + ".component"), component)
                 break;
@@ -57,21 +56,14 @@ program.command('create <type> <name>')
 program.command('develop <name>')
     .description('Develop a component using the live server.')
     .action(async (name) => {
-        console.log("serving")
         const DIR_OUT = join(baseDir, 'dist')
         const DIR_SEARCH = join(baseDir, 'components')
-
         const DIR_ROOT = join(baseDir, "components", `${name}.component`)
-        console.log("DIR_SEARCH", DIR_SEARCH)
         const DEVELOP_ROOT = join(baseDir, "dist", "develop")
-
 
         // TODO: combine LiveServer and WebSocketController into one class that extends Server
         let liveServer = new LiveServer(DEVELOP_ROOT)
         await liveServer.start(8081)
-
-        // let wss = new WebSocketController(8089)
-        // console.log("SUCCCC", wss.socket)
 
         const wss = new WebSocket.Server({ port: 8089 })
         let connection

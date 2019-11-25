@@ -1,9 +1,3 @@
-class Startup {
-    public static main(): number {
-        console.log('Hello World');
-        return 0;
-    }
-}
 
 import { join } from "path"
 
@@ -19,12 +13,6 @@ import { fileExists } from "./utils/file";
 import { readFileSync, existsSync, readdirSync } from 'fs';
 import { Component } from "./component";
 
-
-
-// console.log(routes)
-
-
-// buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT)
 
 class Framework {
     // Directories and filepaths
@@ -75,13 +63,10 @@ class Framework {
      * @param name name of Component to render
      */
     render(res: ServerResponse, name: string) {
-        console.log("pre")
         let component = this.componentCache.find((c) => {
             return c.name === name
         })
-        console.log("fouind", component.buildSet)
         if (this.debug) {
-            console.log("REGBUILDING")
             component.build(this.dirOut, this.dirSearch)
         }
         let content = combine(component, this.dirOut, this.dirSearch)
@@ -109,7 +94,6 @@ class Framework {
     // TODO: buildWatch
     serve(port: number) {
         let routes = require(join(this.appRoot, "config", "routes.json"))
-        console.log(routes)
         this.server = new Server(join(this.appRoot, "controllers"), routes)
         this.server.start(port)
     }
@@ -121,10 +105,8 @@ class Framework {
 
 function renderComponent(res: ServerResponse, name: string) {
     let componentPath = name
-    console.log("PATTTTTH", componentPath)
     if (existsSync(componentPath)) {
         let component = readFileSync(componentPath, "utf8")
-        console.log(component)
         res.end(component)
     } else {
         console.error("Component not found ya thot")

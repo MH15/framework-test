@@ -25,7 +25,6 @@ export class LiveServer extends Server {
                 this.httpServer.listen(port)
                 console.log(`Server started on port ${port}.`)
 
-                console.log("Everything started")
                 resolve()
             } catch (e) {
                 console.error("Error opening server on port", port)
