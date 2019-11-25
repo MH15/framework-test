@@ -1,5 +1,5 @@
 
-import { readFileSync, writeFileSync, mkdirSync } from "fs"
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "fs"
 import { parseHTML } from './utils/parser';
 
 import { join, parse } from "path";
@@ -60,9 +60,9 @@ class Component {
         let result = ""
         this.buildSet = new Set<string>()
         this.buildSet.add(this.name)
-        mkdirSync(join(buildPath, "mustache"), { recursive: true })
-        mkdirSync(join(buildPath, "style"), { recursive: true })
-        mkdirSync(join(buildPath, "script"), { recursive: true })
+        newDir(join(buildPath, "mustache"))
+        newDir(join(buildPath, "style"))
+        newDir(join(buildPath, "script"))
 
         // build mustache to dist/mustache folder
         let mustachePath = join(buildPath, "mustache", this.name + ".mustache")
@@ -98,6 +98,12 @@ class Component {
     }
 }
 
+
+function newDir(dir: string) {
+    if (!existsSync(dir)) {
+        mkdirSync(dir, { recursive: true });
+    }
+}
 
 /**
 * Compile styles using the correct preprocessor.

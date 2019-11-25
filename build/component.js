@@ -41,9 +41,9 @@ class Component {
         let result = "";
         this.buildSet = new Set();
         this.buildSet.add(this.name);
-        fs_1.mkdirSync(path_1.join(buildPath, "mustache"), { recursive: true });
-        fs_1.mkdirSync(path_1.join(buildPath, "style"), { recursive: true });
-        fs_1.mkdirSync(path_1.join(buildPath, "script"), { recursive: true });
+        newDir(path_1.join(buildPath, "mustache"));
+        newDir(path_1.join(buildPath, "style"));
+        newDir(path_1.join(buildPath, "script"));
         // build mustache to dist/mustache folder
         let mustachePath = path_1.join(buildPath, "mustache", this.name + ".mustache");
         fs_1.writeFileSync(mustachePath, this.template.body);
@@ -74,6 +74,11 @@ class Component {
     }
 }
 exports.Component = Component;
+function newDir(dir) {
+    if (!fs_1.existsSync(dir)) {
+        fs_1.mkdirSync(dir, { recursive: true });
+    }
+}
 /**
 * Compile styles using the correct preprocessor.
 * @param {Node} style the DOM Node
