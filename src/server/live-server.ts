@@ -39,7 +39,7 @@ export class LiveServer extends Server {
     handle(req: http.IncomingMessage, res: http.ServerResponse) {
         const parsedUrl = url.parse(req.url);
         const sanitizePath = path.normalize(parsedUrl.pathname).replace(/^(\.\.[\/\\])+/, '');
-        let pathname = path.join(__dirname, "../..", "dist", "develop", sanitizePath);
+        let pathname = path.join(process.cwd(), "dist", "develop", sanitizePath);
 
         fs.exists(pathname, function (exist) {
             if (!exist) {
@@ -55,9 +55,8 @@ export class LiveServer extends Server {
             // if is a directory, then look for index.html
             if (fs.statSync(pathname).isDirectory()) {
                 // pathname += '/index.html';
-                // pathname = path.join(__dirname, "../..", "_framework");
                 pathname += '/index.html';
-                let p = path.join(__dirname, "../..", "dist", "develop", "develop.mustache")
+                let p = path.join(process.cwd(), "dist", "develop", "develop.mustache")
                 let developHTML = Mustache.render(fs.readFileSync(p, "utf8"), {
                     name: "bitch",
                     type: "componentz",

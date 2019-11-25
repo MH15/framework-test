@@ -10,7 +10,6 @@ const path_1 = require("path");
 /**
  * Config
  */
-const PROJECT = path_1.join(__dirname, "..");
 const builder_1 = require("./builder");
 const server_1 = require("./server/server");
 const fs_1 = require("fs");

@@ -10,7 +10,6 @@ import { join } from "path"
 /**
  * Config
  */
-const PROJECT = join(__dirname, "..")
 
 
 import { buildWatch, buildAll, combine } from './builder';

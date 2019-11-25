@@ -16,7 +16,11 @@ let baseDir = process.cwd()
 
 let component = `<template></template>
 
-<style lang="sass"></style>
+<style lang="sass">    
+h1 {
+    background: orange;
+}
+</style>
 
 <script></script>
 `
@@ -40,6 +44,7 @@ program.command('create <type> <name>')
         switch (type.toLowerCase()) {
             case 'component':
                 let dirComponents = join(baseDir, 'components')
+                console.log(dirComponents)
                 mkdirSync(dirComponents, { recursive: true })
                 writeFileSync(join(dirComponents, name + ".component"), component)
                 break;
@@ -57,7 +62,7 @@ program.command('develop <name>')
         const DIR_SEARCH = join(baseDir, 'components')
 
         const DIR_ROOT = join(baseDir, "components", `${name}.component`)
-        console.log("DIR_ROOT", DIR_ROOT)
+        console.log("DIR_SEARCH", DIR_SEARCH)
         const DEVELOP_ROOT = join(baseDir, "dist", "develop")
 
 
