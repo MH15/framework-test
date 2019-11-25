@@ -20,7 +20,7 @@ const program = new commander.Command();
 let baseDir = process.cwd();
 let component = `<template></template>
 
-<style lang="sass">    
+<style lang="scss">    
 h1 {
     background: orange;
 }
