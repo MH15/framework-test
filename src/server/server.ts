@@ -11,18 +11,18 @@ const { pathToRegexp, match, parse, compile } = require("path-to-regexp");
 
 class Server {
     private routes
-    private server: http.Server
+    public httpServer: http.Server
     private controllers: string
     constructor(controllerPath: string, routes) {
         this.controllers = controllerPath
         this.routes = routes
         console.log("this outer", this)
-        this.server = http.createServer(this.handle.bind(this))
+        this.httpServer = http.createServer(this.handle.bind(this))
     }
 
     start(port: number) {
         try {
-            this.server.listen(port)
+            this.httpServer.listen(port)
             console.log(`Server started on port ${port}.`)
         } catch (e) {
             console.error("Error opening server on port", port)
@@ -31,7 +31,7 @@ class Server {
     }
 
     stop() {
-        this.server.close()
+        this.httpServer.close()
     }
 
     handle(req: http.IncomingMessage, res: http.ServerResponse) {

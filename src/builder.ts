@@ -8,14 +8,11 @@ import { readFileSync, writeFileSync } from 'fs';
 
 const Mustache = require("mustache")
 import * as chokidar from "chokidar"
+import { WebSocketController } from './server/live-server';
 
 
 export function buildAll(component: Component, dirOut: string, dirInclude: string): Set<string> {
-    // Build component files
     let buildSet = component.build(dirOut, dirInclude)
-
-    // Combine and serve
-
     let includes = {}
     let joinedStyles = ""
     let joinedScripts = ""
@@ -27,18 +24,12 @@ export function buildAll(component: Component, dirOut: string, dirInclude: strin
     let rendered = Mustache.render(readFileSync(join(dirOut, "mustache", component.name + ".mustache"), "utf8"), {}, includes)
 
     let develop = `<html><head><title>Test</title></head><body>${rendered}<style>${joinedStyles}</style><script>${joinedScripts}</script></body></html>`
-    writeFileSync(join(dirOut, "develop", "index.html"), develop)
+    writeFileSync(join(dirOut, "develop", "temp.html"), develop)
     component.buildSet = buildSet
     return buildSet
 }
 
 export function combine(component: Component, dirOut: string, dirSearch: string): string {
-    // Build component files
-
-    // Combine and serve
-
-    console.log(component.buildSet)
-
     let includes = {}
     let joinedStyles = ""
     let joinedScripts = ""
@@ -52,8 +43,6 @@ export function combine(component: Component, dirOut: string, dirSearch: string)
     let develop = `<html><head><title>Test</title></head><body>${rendered}<style>${joinedStyles}</style><script>${joinedScripts}</script></body></html>`
 
     return develop
-
-    // writeFileSync(join(dirOut, "develop", "index.html"), develop)
 }
 
 /**
@@ -63,20 +52,25 @@ export function combine(component: Component, dirOut: string, dirSearch: string)
  * @param dirInclude the directory to search for included components in 
  * @param pathRoot the path to the component
  */
-export function buildWatch(dirOut: string, dirInclude: string, pathRoot: string) {
+export function buildWatch(dirOut: string, dirInclude: string, pathRoot: string, wss: WebSocketController) {
+    console.log("pathRoot", pathRoot)
     let root = new Component(pathRoot)
+    console.error("shouldnt see this fohasbc")
 
     let buildSetInitial = buildAll(root, dirOut, dirInclude)
 
     chokidar.watch(dirInclude, {
         ignoreInitial: true
     }).on('all', (event, path) => {
-        // TODO: run builder whenever any item in buildSet is changed
         if (buildSetInitial.has(parse(path).name)) {
+            console.log("BEFORE")
             root.load(pathRoot)
+            console.log("AFTER")
             buildSetInitial = buildAll(root, dirOut, dirInclude)
         }
-        console.log(event, path);
+        // console.log(event, path);
+        console.log(wss.socket.wss.send)
+        wss.socket.wss.send('reload')
     });
 
 }

@@ -2,6 +2,9 @@
 
 import { join } from "path";
 import { mkdirSync, writeFileSync } from "fs";
+import { makeDirs } from "./utils/file";
+import { buildWatch } from "./builder";
+import { LiveServer, WebSocketController } from './server/live-server';
 
 const commander = require('commander');
 const program = new commander.Command();
@@ -23,14 +26,21 @@ program.version('0.0.1')
     .command('init')
     .description('Initiate a new project.')
     .action(() => {
-        mkdirSync(dirComponents, { recursive: true })
+        let dirs = [
+            join(baseDir, 'components'),
+            join(baseDir, 'controllers'),
+            join(baseDir, 'config'),
+            join(baseDir, 'dist')
+        ]
+        makeDirs(dirs)
+        // TODO: make the rest of the default files
     })
-    .command('create <type> <name>')
+
+program.command('create <type> <name>')
     .description('Create a new component or controller')
     .action((type: string, name) => {
         switch (type.toLowerCase()) {
             case 'component':
-                console.log(process.cwd())
                 let dirComponents = join(baseDir, 'components')
                 mkdirSync(dirComponents, { recursive: true })
                 writeFileSync(join(dirComponents, name + ".component"), component)
@@ -41,9 +51,32 @@ program.version('0.0.1')
                 console.error("That's not a valid creation type.")
         }
     })
-    .command('develop <name>')
+program.command('develop <name>')
     .description('Develop a component using the live server.')
-    .action((name) => {
+    .action(async (name) => {
+        console.log("serving")
+        const DIR_OUT = join(baseDir, 'dist')
+        const DIR_SEARCH = join(baseDir, 'components')
+
+        const DIR_ROOT = join(baseDir, "components", `${name}.component`)
+        const DEVELOP_ROOT = join(baseDir, "dist", "develop")
+
+
+
+        let liveServer = new LiveServer(DEVELOP_ROOT)
+        await liveServer.start(8081)
+
+        let wss = new WebSocketController(8089)
+        // wss.start()
+
+
+        console.log(wss)
+
+        // liveServer.restart(liveServer.wss)
+        buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT, wss)
+
+        console.log("MAYBE BEFOREY")
+        // liveServer.startSocket()
 
     })
 

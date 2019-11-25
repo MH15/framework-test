@@ -1,5 +1,5 @@
 <template include="included">
-    <div id="a">text</div>
+    <div id="a">yartersi</div>
     {{> included}}
 </template>
 
@@ -10,5 +10,5 @@
 </style>
 
 <script>
-    alert('bb');
+    // alert('bb');
 </script>

@@ -30,7 +30,6 @@ const mimeType = {
     '.ttf': 'aplication/font-sfnt'
 };
 
-console.log("DO ITasjklcbaslkjcbnjkasdndcjlkasdncj")
 
 const ejs = require("ejs")
 const utils = require("../utils")
@@ -103,11 +102,11 @@ function start(type, name) {
                         res.setHeader('Content-type', mimeType[ext] || 'text/plain');
                         res.end(data);
                     }
-                });
+                })
             }
 
 
-        });
+        })
 
 
     })

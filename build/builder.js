@@ -9,9 +9,7 @@ const fs_1 = require("fs");
 const Mustache = require("mustache");
 const chokidar = require("chokidar");
 function buildAll(component, dirOut, dirInclude) {
-    // Build component files
     let buildSet = component.build(dirOut, dirInclude);
-    // Combine and serve
     let includes = {};
     let joinedStyles = "";
     let joinedScripts = "";
@@ -22,15 +20,12 @@ function buildAll(component, dirOut, dirInclude) {
     }
     let rendered = Mustache.render(fs_1.readFileSync(path_1.join(dirOut, "mustache", component.name + ".mustache"), "utf8"), {}, includes);
     let develop = `<html><head><title>Test</title></head><body>${rendered}<style>${joinedStyles}</style><script>${joinedScripts}</script></body></html>`;
-    fs_1.writeFileSync(path_1.join(dirOut, "develop", "index.html"), develop);
+    fs_1.writeFileSync(path_1.join(dirOut, "develop", "temp.html"), develop);
     component.buildSet = buildSet;
     return buildSet;
 }
 exports.buildAll = buildAll;
 function combine(component, dirOut, dirSearch) {
-    // Build component files
-    // Combine and serve
-    console.log(component.buildSet);
     let includes = {};
     let joinedStyles = "";
     let joinedScripts = "";
@@ -42,7 +37,6 @@ function combine(component, dirOut, dirSearch) {
     let rendered = Mustache.render(fs_1.readFileSync(path_1.join(dirOut, "mustache", component.name + ".mustache"), "utf8"), {}, includes);
     let develop = `<html><head><title>Test</title></head><body>${rendered}<style>${joinedStyles}</style><script>${joinedScripts}</script></body></html>`;
     return develop;
-    // writeFileSync(join(dirOut, "develop", "index.html"), develop)
 }
 exports.combine = combine;
 /**
@@ -52,18 +46,23 @@ exports.combine = combine;
  * @param dirInclude the directory to search for included components in
  * @param pathRoot the path to the component
  */
-function buildWatch(dirOut, dirInclude, pathRoot) {
+function buildWatch(dirOut, dirInclude, pathRoot, wss) {
+    console.log("pathRoot", pathRoot);
     let root = new component_1.Component(pathRoot);
+    console.error("shouldnt see this fohasbc");
     let buildSetInitial = buildAll(root, dirOut, dirInclude);
     chokidar.watch(dirInclude, {
         ignoreInitial: true
     }).on('all', (event, path) => {
-        // TODO: run builder whenever any item in buildSet is changed
         if (buildSetInitial.has(path_1.parse(path).name)) {
+            console.log("BEFORE");
             root.load(pathRoot);
+            console.log("AFTER");
             buildSetInitial = buildAll(root, dirOut, dirInclude);
         }
-        console.log(event, path);
+        // console.log(event, path);
+        console.log(wss.socket.wss.send);
+        wss.socket.wss.send('reload');
     });
 }
 exports.buildWatch = buildWatch;

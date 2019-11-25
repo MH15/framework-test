@@ -13,11 +13,11 @@ class Server {
         this.controllers = controllerPath;
         this.routes = routes;
         console.log("this outer", this);
-        this.server = http.createServer(this.handle.bind(this));
+        this.httpServer = http.createServer(this.handle.bind(this));
     }
     start(port) {
         try {
-            this.server.listen(port);
+            this.httpServer.listen(port);
             console.log(`Server started on port ${port}.`);
         }
         catch (e) {
@@ -25,7 +25,7 @@ class Server {
         }
     }
     stop() {
-        this.server.close();
+        this.httpServer.close();
     }
     handle(req, res) {
         // parse URL

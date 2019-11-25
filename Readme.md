@@ -1,5 +1,5 @@
 # TODO
-- Support SASS
-- Add the command line support
+- (done) Support SASS 
+- (done) Add the command line support
 - Hot reload server
 - BUILD THE SITE
