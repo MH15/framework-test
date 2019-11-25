@@ -1,8 +1,8 @@
 {
-  "name": "example",
+  "name": "spacecobra",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "build/app.js",
   "bin": {
     "framework": "./build/cli.js"
   },
