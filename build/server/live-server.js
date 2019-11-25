@@ -16,7 +16,6 @@ class LiveServer extends server_1.Server {
             try {
                 this.httpServer.listen(port);
                 console.log(`Server started on port ${port}.`);
-                console.log("Everything started");
                 resolve();
             }
             catch (e) {

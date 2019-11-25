@@ -12,7 +12,6 @@ class Server {
     constructor(controllerPath, routes) {
         this.controllers = controllerPath;
         this.routes = routes;
-        console.log("this outer", this);
         this.httpServer = http.createServer(this.handle.bind(this));
     }
     start(port) {
@@ -38,7 +37,6 @@ class Server {
         console.log(`sp: ${sanitizedPath},`);
         let pathToMatch = path.parse(sanitizedPath);
         let foundController = false;
-        console.log("ligma", this.routes);
         this.routes.routes.forEach(route => {
             let matcher = match(route.path, { decode: decodeURIComponent });
             let paramaters = matcher(parsedUrl.pathname);
@@ -49,7 +47,6 @@ class Server {
                 let finder = route.controller.split('.');
                 let p = path.join(this.controllers, finder[0]);
                 let controller = require(p)[finder[1]];
-                console.log(controller);
                 controller(req, res, paramaters.params);
                 return;
             }

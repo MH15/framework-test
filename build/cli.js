@@ -20,7 +20,11 @@ const program = new commander.Command();
 let baseDir = process.cwd();
 let component = `<template></template>
 
-<style lang="sass"></style>
+<style lang="sass">    
+h1 {
+    background: orange;
+}
+</style>
 
 <script></script>
 `;
@@ -41,7 +45,6 @@ program.command('create <type> <name>')
     switch (type.toLowerCase()) {
         case 'component':
             let dirComponents = path_1.join(baseDir, 'components');
-            console.log(dirComponents);
             fs_1.mkdirSync(dirComponents, { recursive: true });
             fs_1.writeFileSync(path_1.join(dirComponents, name + ".component"), component);
             break;
@@ -54,17 +57,13 @@ program.command('create <type> <name>')
 program.command('develop <name>')
     .description('Develop a component using the live server.')
     .action((name) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("serving");
     const DIR_OUT = path_1.join(baseDir, 'dist');
     const DIR_SEARCH = path_1.join(baseDir, 'components');
     const DIR_ROOT = path_1.join(baseDir, "components", `${name}.component`);
-    console.log("DIR_SEARCH", DIR_SEARCH);
     const DEVELOP_ROOT = path_1.join(baseDir, "dist", "develop");
     // TODO: combine LiveServer and WebSocketController into one class that extends Server
     let liveServer = new live_server_1.LiveServer(DEVELOP_ROOT);
     yield liveServer.start(8081);
-    // let wss = new WebSocketController(8089)
-    // console.log("SUCCCC", wss.socket)
     const wss = new WebSocket.Server({ port: 8089 });
     let connection;
     wss.on('connection', (ws) => {
