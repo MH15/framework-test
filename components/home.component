@@ -1,5 +1,6 @@
-<template>
+<template include="page">
     <h1>Home</h1>
+    {{> page }}
 </template>
 
 <style lang="scss">

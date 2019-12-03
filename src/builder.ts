@@ -7,6 +7,8 @@ import { join, parse } from "path";
 import { readFileSync, writeFileSync } from 'fs';
 
 const Mustache = require("mustache")
+
+const ejs = require("ejs")
 import * as chokidar from "chokidar"
 import { WebSocketController } from './server/live-server';
 
