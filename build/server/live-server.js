@@ -5,7 +5,7 @@ const path = require("path");
 const server_1 = require("./server");
 const fs = require("fs");
 const WebSocket = require("ws");
-const Mustache = require("mustache");
+const ejs = require("ejs");
 class LiveServer extends server_1.Server {
     constructor(developPath) {
         super("", {});
@@ -42,12 +42,18 @@ class LiveServer extends server_1.Server {
             if (fs.statSync(pathname).isDirectory()) {
                 // pathname += '/index.html';
                 pathname += '/index.html';
-                let p = path.join(process.cwd(), "dist", "develop", "develop.mustache");
-                let developHTML = Mustache.render(fs.readFileSync(p, "utf8"), {
-                    name: "bitch",
-                    type: "componentz",
+                let p = path.join(process.cwd(), "dist", "develop", "develop.ejs");
+                // let developHTML = Mustache.render(fs.readFileSync(p, "utf8"), {
+                //     name: "bitch",
+                //     type: "componentz",
+                //     source: "temp.html"
+                // })
+                let developHTML = ejs.render(fs.readFileSync(p, "utf8"), {
+                    name: "test name",
+                    type: "component",
                     source: "temp.html"
                 });
+                // console.log("DEV", developHTML)
                 res.setHeader('Content-type', mimeType[".html"] || 'text/plain');
                 res.end(developHTML);
             }

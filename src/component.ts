@@ -60,12 +60,12 @@ class Component {
         let result = ""
         this.buildSet = new Set<string>()
         this.buildSet.add(this.name)
-        newDir(join(buildPath, "mustache"))
+        newDir(join(buildPath, "ejs"))
         newDir(join(buildPath, "style"))
         newDir(join(buildPath, "script"))
 
-        // build mustache to dist/mustache folder
-        let mustachePath = join(buildPath, "mustache", this.name + ".mustache")
+        // build mustache to dist/ejs folder
+        let mustachePath = join(buildPath, "ejs", this.name + ".ejs")
         writeFileSync(mustachePath, this.template.body)
 
         // build style to dist/style folder

@@ -67,6 +67,8 @@ program.command('develop <name>')
         let liveServer = new LiveServer(DEVELOP_ROOT)
         await liveServer.start(8081)
 
+        console.log("starting liveserver")
+
         const wss = new WebSocket.Server({ port: 8089 })
         let connection
         wss.on('connection', (ws) => {

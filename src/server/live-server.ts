@@ -11,6 +11,8 @@ import * as WebSocket from "ws"
 import Mustache = require("mustache")
 import { resolve } from "dns"
 
+const ejs = require("ejs")
+
 export class LiveServer extends Server {
     private developPath: string
     private socket: any
@@ -55,12 +57,19 @@ export class LiveServer extends Server {
             if (fs.statSync(pathname).isDirectory()) {
                 // pathname += '/index.html';
                 pathname += '/index.html';
-                let p = path.join(process.cwd(), "dist", "develop", "develop.mustache")
-                let developHTML = Mustache.render(fs.readFileSync(p, "utf8"), {
-                    name: "bitch",
-                    type: "componentz",
+                let p = path.join(process.cwd(), "dist", "develop", "develop.ejs")
+                // let developHTML = Mustache.render(fs.readFileSync(p, "utf8"), {
+                //     name: "bitch",
+                //     type: "componentz",
+                //     source: "temp.html"
+                // })
+
+                let developHTML = ejs.render(fs.readFileSync(p, "utf8"), {
+                    name: "test name",
+                    type: "component",
                     source: "temp.html"
                 })
+                // console.log("DEV", developHTML)
 
                 res.setHeader('Content-type', mimeType[".html"] || 'text/plain');
                 res.end(developHTML);

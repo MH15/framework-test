@@ -65,6 +65,7 @@ program.command('develop <name>')
     // TODO: combine LiveServer and WebSocketController into one class that extends Server
     let liveServer = new live_server_1.LiveServer(DEVELOP_ROOT);
     yield liveServer.start(8081);
+    console.log("starting liveserver");
     const wss = new WebSocket.Server({ port: 8089 });
     let connection;
     wss.on('connection', (ws) => {

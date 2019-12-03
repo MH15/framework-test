@@ -41,11 +41,11 @@ class Component {
         let result = "";
         this.buildSet = new Set();
         this.buildSet.add(this.name);
-        newDir(path_1.join(buildPath, "mustache"));
+        newDir(path_1.join(buildPath, "ejs"));
         newDir(path_1.join(buildPath, "style"));
         newDir(path_1.join(buildPath, "script"));
-        // build mustache to dist/mustache folder
-        let mustachePath = path_1.join(buildPath, "mustache", this.name + ".mustache");
+        // build mustache to dist/ejs folder
+        let mustachePath = path_1.join(buildPath, "ejs", this.name + ".ejs");
         fs_1.writeFileSync(mustachePath, this.template.body);
         // build style to dist/style folder
         let stylePath = path_1.join(buildPath, "style", this.name + ".css");
