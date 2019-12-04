@@ -4,6 +4,7 @@ const fs_1 = require("fs");
 const parser_1 = require("./utils/parser");
 const path_1 = require("path");
 const sass = require('node-sass');
+const nunjucks = require("nunjucks");
 /**
  * A Single File Component.
  */
@@ -42,10 +43,11 @@ class Component {
         this.buildSet = new Set();
         this.buildSet.add(this.name);
         newDir(path_1.join(buildPath, "ejs"));
+        newDir(path_1.join(buildPath, "njk"));
         newDir(path_1.join(buildPath, "style"));
         newDir(path_1.join(buildPath, "script"));
         // build mustache to dist/ejs folder
-        let mustachePath = path_1.join(buildPath, "ejs", this.name + ".ejs");
+        let mustachePath = path_1.join(buildPath, "njk", this.name + ".njk");
         fs_1.writeFileSync(mustachePath, this.template.body);
         // build style to dist/style folder
         let stylePath = path_1.join(buildPath, "style", this.name + ".css");

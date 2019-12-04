@@ -5,6 +5,7 @@ import { parseHTML } from './utils/parser';
 import { join, parse } from "path";
 const sass = require('node-sass')
 
+const nunjucks = require("nunjucks")
 
 
 interface ComponentElement {
@@ -61,11 +62,12 @@ class Component {
         this.buildSet = new Set<string>()
         this.buildSet.add(this.name)
         newDir(join(buildPath, "ejs"))
+        newDir(join(buildPath, "njk"))
         newDir(join(buildPath, "style"))
         newDir(join(buildPath, "script"))
 
         // build mustache to dist/ejs folder
-        let mustachePath = join(buildPath, "ejs", this.name + ".ejs")
+        let mustachePath = join(buildPath, "njk", this.name + ".njk")
         writeFileSync(mustachePath, this.template.body)
 
         // build style to dist/style folder

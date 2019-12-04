@@ -1,0 +1,18 @@
+<template include="page">
+    {% extends "page.njk" %}
+    {% block title %}
+        Page 2
+    {% endblock %}
+    {% block body %}
+        raukus nitty tickler
+    {% endblock %}
+
+</template>
+
+<style lang="scss">    
+h1 {
+    background: orange;
+}
+</style>
+
+<script></script>
