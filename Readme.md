@@ -1,11 +1,19 @@
 # About
 Working copy of a framework for building websites.
 
+# Structure
+`build` - built Javascript files
+`src` - mostly Typescript source code
+`default` - default project files
+`.vscode` - development config files
+
+
 # TODO
 - (done) Support SASS 
 - (done) Add the command line support
 - (done) Hot reload server
-- BUILD THE SITE
+- HTML parser
+- Templating engine
 
 
 # Implementation
