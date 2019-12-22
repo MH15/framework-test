@@ -24,13 +24,39 @@ export class HTMLParser extends Parser {
 
     // Parse a single node.
     parseNode(): DOM.Node {
-        if (this.peek() === "<") {
+        let el: DOM.Node
+        if (this.startsWith("<!--")) {
+            el = this.parseComment()
+        } else if (this.peek() === "<") {
             let el = this.parseElement()
             return el
         } else {
             let text = this.parseText()
             return text
         }
+        return el
+    }
+
+    // Parse a comment node.
+    parseComment(): DOM.Node {
+        // Opening tag
+        assert.equal(this.consume(), "<")
+        assert.equal(this.consume(), "!")
+        assert.equal(this.consume(), "-")
+        assert.equal(this.consume(), "-")
+
+        // parse until end tag reached
+        let commentText = ""
+        while (!this.startsWith("-->")) {
+            commentText += this.consume()
+        }
+
+        // Closing tag
+        assert.equal(this.consume(), "-")
+        assert.equal(this.consume(), "-")
+        assert.equal(this.consume(), ">")
+
+        return DOM.comment(commentText)
     }
 
     // Parse a text node.

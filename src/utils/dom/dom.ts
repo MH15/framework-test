@@ -1,7 +1,8 @@
 
 enum NodeType {
     Text,
-    Element
+    Element,
+    Comment
 }
 
 interface ElementData {
@@ -36,7 +37,15 @@ function text(innerHTML: string): Node {
         }
     }
 }
-
+function comment(innerHTML: string): Node {
+    return {
+        nodeType: NodeType.Comment,
+        children: [],
+        data: {
+            innerHTML
+        }
+    }
+}
 
 /*
  * DOM Helpers
@@ -63,6 +72,8 @@ function prettyPrinter(node: Node, level?: number): string {
         })
 
         result += padding(level) + "</" + node.data.tagName + ">" + "\n"
+    } else if (node.nodeType = NodeType.Comment) {
+        result += padding(level) + "<!--" + node.data.innerHTML + "-->" + "\n"
     }
 
     return result
@@ -86,4 +97,4 @@ function printAttributes(attributes: Map<string, string>) {
 }
 
 
-export { Node, NodeType, elem, text, prettyPrinter }
+export { Node, NodeType, elem, text, comment, prettyPrinter }

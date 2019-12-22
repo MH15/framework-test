@@ -14,7 +14,7 @@ const fs_1 = require("fs");
 const builder_1 = require("./builder");
 const live_server_1 = require("./server/live-server");
 const file_1 = require("./utils/file");
-const parser_1 = require("./utils/dom/parser");
+const current_parser_1 = require("./utils/dom/current-parser");
 const WebSocket = require("ws");
 const commander = require('commander');
 const program = new commander.Command();
@@ -95,7 +95,7 @@ program.command('parse <name>')
     const DEVELOP_ROOT = path_1.join(baseDir, "dist", "develop");
     let file = fs_1.readFileSync(path_1.join(DIR_SEARCH, name + ".component"), "utf8");
     // console.log(file)
-    parser_1.parsing(file);
+    current_parser_1.parsing(file);
 }));
 program.parse(process.argv);
 //# sourceMappingURL=cli.js.map

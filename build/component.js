@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = require("fs");
-const parser_1 = require("./utils/dom/parser");
+const current_parser_1 = require("./utils/dom/current-parser");
 const path_1 = require("path");
 const file_1 = require("./utils/file");
 const sass = require('node-sass');
@@ -20,7 +20,7 @@ class Component {
     load(filepath) {
         this.file = fs_1.readFileSync(filepath, "utf8");
         this.name = path_1.parse(filepath).name;
-        let a = parser_1.parseHTML(this.file);
+        let a = current_parser_1.parseHTML(this.file);
         this.template = {
             dom: a.getElementsByTagName("template")[0],
             body: a.getElementsByTagName("template")[0].innerHTML

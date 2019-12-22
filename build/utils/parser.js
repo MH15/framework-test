@@ -49,6 +49,12 @@ class Parser {
         }
         return result;
     }
+    // Consume whitespace.
+    consumeWhitespace() {
+        this.consumeWhile((char) => {
+            return ' \t\n\r\v'.indexOf(char) >= 0;
+        });
+    }
 }
 exports.Parser = Parser;
 //# sourceMappingURL=parser.js.map

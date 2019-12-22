@@ -4,6 +4,7 @@ var NodeType;
 (function (NodeType) {
     NodeType[NodeType["Text"] = 0] = "Text";
     NodeType[NodeType["Element"] = 1] = "Element";
+    NodeType[NodeType["Comment"] = 2] = "Comment";
 })(NodeType || (NodeType = {}));
 exports.NodeType = NodeType;
 function elem(tagName, attributes, children) {
@@ -27,6 +28,16 @@ function text(innerHTML) {
     };
 }
 exports.text = text;
+function comment(innerHTML) {
+    return {
+        nodeType: NodeType.Comment,
+        children: [],
+        data: {
+            innerHTML
+        }
+    };
+}
+exports.comment = comment;
 /*
  * DOM Helpers
  */
@@ -50,6 +61,9 @@ function prettyPrinter(node, level) {
             result += prettyPrinter(child, level + 1);
         });
         result += padding(level) + "</" + node.data.tagName + ">" + "\n";
+    }
+    else if (node.nodeType = NodeType.Comment) {
+        result += padding(level) + "<!--" + node.data.innerHTML + "-->" + "\n";
     }
     return result;
 }

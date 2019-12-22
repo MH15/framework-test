@@ -16,21 +16,17 @@ class HTMLParser extends parser_1.Parser {
         }
         return nodes;
     }
-    // Consume whitespace.
-    consumeWhitespace() {
-        this.consumeWhile((char) => {
-            return ' \t\n\r\v'.indexOf(char) >= 0;
-        });
-    }
-    /**
-     * Parse a tag or attribute name
-     */
+    // Parse a tag or attribute name.
     parseTagName() {
         return this.consumeWhile(isAlphaNumeric);
     }
     // Parse a single node.
     parseNode() {
-        if (this.peek() === "<") {
+        let el;
+        if (this.startsWith("<!--")) {
+            el = this.parseComment();
+        }
+        else if (this.peek() === "<") {
             let el = this.parseElement();
             return el;
         }
@@ -38,6 +34,25 @@ class HTMLParser extends parser_1.Parser {
             let text = this.parseText();
             return text;
         }
+        return el;
+    }
+    // Parse a comment node.
+    parseComment() {
+        // Opening tag
+        assert.equal(this.consume(), "<");
+        assert.equal(this.consume(), "!");
+        assert.equal(this.consume(), "-");
+        assert.equal(this.consume(), "-");
+        // parse until end tag reached
+        let commentText = "";
+        while (!this.startsWith("-->")) {
+            commentText += this.consume();
+        }
+        // Closing tag
+        assert.equal(this.consume(), "-");
+        assert.equal(this.consume(), "-");
+        assert.equal(this.consume(), ">");
+        return DOM.comment(commentText);
     }
     // Parse a text node.
     parseText() {
