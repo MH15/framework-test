@@ -15,5 +15,11 @@ function fileExists(path: string) {
     return false
 }
 
+function newDir(dir: string) {
+    if (!existsSync(dir)) {
+        mkdirSync(dir, { recursive: true });
+    }
+}
 
-export { watch, fileExists, makeDirs }
+
+export { watch, fileExists, makeDirs, newDir }

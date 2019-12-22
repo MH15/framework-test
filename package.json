@@ -1,10 +1,10 @@
 {
-  "name": "spacecobra",
-  "version": "2.1.7",
+  "name": "neanderthal",
+  "version": "0.0.1",
   "description": "",
   "main": "build/app.js",
   "bin": {
-    "framework": "./build/cli.js"
+    "nean": "./build/cli.js"
   },
   "scripts": {
     "build": "tsc --outDir build",
@@ -21,14 +21,18 @@
     "commander": "^4.0.1",
     "copy-dir": "^1.2.0",
     "dom-parser": "^0.1.6",
+    "domhandler": "^3.0.0",
     "ejs": "^3.0.1",
+    "htmlparser2": "^4.0.0",
     "less": "^3.10.3",
     "mustache": "^3.1.0",
+    "node-html-parser": "^1.1.16",
     "node-sass": "^4.13.0",
     "nunjucks": "^3.2.0",
     "path-to-regexp": "^6.1.0",
     "pejs": "^0.6.5",
-    "ws": "^7.2.0"
+    "ws": "^7.2.0",
+    "xmldom": "^0.2.1"
   },
   "devDependencies": {
     "@types/nunjucks": "^3.1.3"

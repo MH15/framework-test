@@ -94,7 +94,7 @@ program.command('parse <name>')
     const DIR_ROOT = path_1.join(baseDir, "components", `${name}.component`);
     const DEVELOP_ROOT = path_1.join(baseDir, "dist", "develop");
     let file = fs_1.readFileSync(path_1.join(DIR_SEARCH, name + ".component"), "utf8");
-    // console.log(file)
+    console.log(file);
     parser_1.parsing(file);
 }));
 program.parse(process.argv);

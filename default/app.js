@@ -1,25 +1,21 @@
 /**
- * This is the starting point for your app.
+ * Require the library module from neanderthal
+*/
+const { Framework } = require("neanderthal")
+/**
+ * Create the global framework instance and set
+ * it to use the current working directory
  */
-const { Framework } = require("./build/app")
-
-global.fra = new Framework(__dirname, true)
-
-// console.log(fra)
+global.app = new Framework(__dirname, true)
 
 
-module.exports = fra
-
-// Ensure all files are built before serving
-
-var hrstart = process.hrtime()
-
-fra.buildAllComponents()
+/**
+ * Build all components before serving
+ */
+app.buildAllComponents()
 
 
-hrend = process.hrtime(hrstart)
-console.info('Execution time (hr): %ds %dms', hrend[0], hrend[1] / 1000000)
-
-console.log(fra.render)
-
-fra.serve(8000)
+/**
+ * Serve your app!
+ */
+app.serve(8000)

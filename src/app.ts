@@ -1,17 +1,14 @@
 
-import { join } from "path"
-
+import { existsSync, readdirSync, readFileSync } from 'fs';
+import { ServerResponse } from "http";
+import { join } from "path";
 /**
  * Config
  */
-
-
-import { buildWatch, buildAll, combine } from './builder';
-import { Server } from "./server/server";
-import { ServerResponse } from "http";
-import { fileExists } from "./utils/file";
-import { readFileSync, existsSync, readdirSync } from 'fs';
+import { combine } from './builder';
 import { Component } from "./component";
+import { Server } from "./server/server";
+
 
 
 class Framework {
@@ -24,7 +21,7 @@ class Framework {
     // Component cache
     // TODO: make into Set<Component> instead of Array
     private componentCache = []
-    private debug = false
+    private _debug = false
 
     constructor(appRoot: string, debug?: boolean) {
         this.appRoot = appRoot
@@ -34,6 +31,19 @@ class Framework {
             this.debug = true
         }
     }
+
+    /**
+     * Change the current debug setting
+     * TODO: reload server when this changes
+     */
+    set debug(state: boolean) {
+        this._debug = state
+    }
+
+    get debug(): boolean {
+        return this._debug
+    }
+
     /**
      * Build a single component.
      * @param name 
@@ -113,4 +123,4 @@ function renderComponent(res: ServerResponse, name: string) {
     }
 }
 
-export { Framework, renderComponent }
+export { Framework, renderComponent };

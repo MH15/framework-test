@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from "fs"
 import { parseHTML } from './utils/parser';
 
 import { join, parse } from "path";
+import { newDir } from "./utils/file";
 const sass = require('node-sass')
 
 const nunjucks = require("nunjucks")
@@ -101,11 +102,6 @@ class Component {
 }
 
 
-function newDir(dir: string) {
-    if (!existsSync(dir)) {
-        mkdirSync(dir, { recursive: true });
-    }
-}
 
 /**
 * Compile styles using the correct preprocessor.
