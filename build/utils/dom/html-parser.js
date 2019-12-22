@@ -2,14 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const DOM = require("./dom");
 const assert = require("assert");
-class HTMLParser {
-    constructor(content) {
-        this.input = content;
-        this.index = 0;
-    }
-    toString() {
-        return this.input.slice(this.index);
-    }
+const parser_1 = require("../parser");
+class HTMLParser extends parser_1.Parser {
     // Parse a sequence of sibling nodes.
     parseNodes() {
         let nodes = [];
@@ -22,47 +16,7 @@ class HTMLParser {
         }
         return nodes;
     }
-    peek() {
-        return this.input.charAt(this.index);
-    }
-    consume() {
-        if (this.hasNext()) {
-            let res = this.peek();
-            this.index++;
-            return res;
-        }
-        else {
-            console.error("too far");
-        }
-    }
-    hasNext() {
-        return this.index < this.input.length;
-    }
-    // Consume characters until test returns false
-    consumeWhile(test) {
-        let result = "";
-        while (this.hasNext() && test(this.peek())) {
-            result += this.consume();
-        }
-        return result;
-    }
-    // Does the current input start with the given string?
-    startsWith(s) {
-        let result = true;
-        if (this.index + s.length > this.input.length) {
-            result = false;
-        }
-        else {
-            let compare = this.input.slice(this.index, this.index + s.length);
-            if (compare != s) {
-                result = false;
-            }
-        }
-        return result;
-    }
-    /**
-     * Consume whitespace
-     */
+    // Consume whitespace.
     consumeWhitespace() {
         this.consumeWhile((char) => {
             return ' \t\n\r\v'.indexOf(char) >= 0;

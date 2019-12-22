@@ -13,6 +13,7 @@ function parsing(content) {
         root = DOM.elem("html", new Map(), nodes);
     }
     console.log(DOM.prettyPrinter(root));
+    // sample usage of a mutation
     traversal_1.mutation(root, (n) => {
         return n.nodeType === DOM.NodeType.Element;
     }, (n) => {

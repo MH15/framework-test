@@ -1,9 +1,9 @@
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "fs"
-import { parseHTML } from './utils/dom/parser';
+import { parseHTML } from './utils/dom/current-parser'
 
-import { join, parse } from "path";
-import { newDir } from "./utils/file";
+import { join, parse } from "path"
+import { newDir } from "./utils/file"
 const sass = require('node-sass')
 
 const nunjucks = require("nunjucks")
@@ -109,7 +109,7 @@ class Component {
 */
 function compileStyles(style: ComponentElement): string {
     let styleLang = style.dom.getAttribute("lang") || "css"
-    let styleResult;
+    let styleResult
     switch (styleLang) {
         case "scss":
             styleResult = sass.renderSync({

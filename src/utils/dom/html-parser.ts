@@ -1,16 +1,9 @@
 import * as DOM from "./dom"
 import * as assert from "assert"
+import { Parser } from "../parser"
 
-export class HTMLParser {
-    input: string
-    index: number
-    constructor(content) {
-        this.input = content
-        this.index = 0
-    }
-    public toString(): string {
-        return this.input.slice(this.index)
-    }
+export class HTMLParser extends Parser {
+
     // Parse a sequence of sibling nodes.
     parseNodes(): DOM.Node[] {
         let nodes = []
@@ -24,59 +17,7 @@ export class HTMLParser {
         return nodes
     }
 
-    peek(): string {
-        return this.input.charAt(this.index)
-    }
-
-    consume(): string {
-        if (this.hasNext()) {
-            let res = this.peek()
-            this.index++
-            return res
-        } else {
-            console.error("too far")
-        }
-    }
-
-    hasNext(): boolean {
-        return this.index < this.input.length
-    }
-
-    // Consume characters until test returns false
-    consumeWhile(test: Function): string {
-        let result = ""
-        while (this.hasNext() && test(this.peek())) {
-            result += this.consume()
-        }
-        return result
-    }
-    // Does the current input start with the given string?
-    startsWith(s: string): boolean {
-        let result = true
-        if (this.index + s.length > this.input.length) {
-            result = false
-        } else {
-            let compare = this.input.slice(this.index, this.index + s.length)
-            if (compare != s) {
-                result = false
-            }
-        }
-
-        return result
-    }
-
-    /**
-     * Consume whitespace
-     */
-    consumeWhitespace() {
-        this.consumeWhile((char) => {
-            return ' \t\n\r\v'.indexOf(char) >= 0
-        })
-    }
-
-    /**
-     * Parse a tag or attribute name
-     */
+    // Parse a tag or attribute name.
     parseTagName(): string {
         return this.consumeWhile(isAlphaNumeric)
     }
@@ -120,16 +61,16 @@ export class HTMLParser {
 
     // Parse a single name="value" pair.
     parseAttribute(): { key: string, value: string } {
-        let key = this.parseTagName();
+        let key = this.parseTagName()
         assert.equal(this.consume(), "=")
-        let value = this.parseAttributeValue();
-        return { key, value };
+        let value = this.parseAttributeValue()
+        return { key, value }
     }
 
     // Parse a quoted value.
     parseAttributeValue(): string {
         let open_quote = this.consume()
-        assert(open_quote == '"' || open_quote == '\'');
+        assert(open_quote == '"' || open_quote == '\'')
         let value = this.consumeWhile((char) => {
             return char != open_quote
         })
@@ -157,17 +98,17 @@ export class HTMLParser {
 
 
 function isAlphaNumeric(str) {
-    var code, i, len;
+    var code, i, len
 
     for (i = 0, len = str.length; i < len; i++) {
-        code = str.charCodeAt(i);
+        code = str.charCodeAt(i)
         if (!(code > 47 && code < 58) && // numeric (0-9)
             !(code > 64 && code < 91) && // upper alpha (A-Z)
             !(code > 96 && code < 123)) { // lower alpha (a-z)
-            return false;
+            return false
         }
     }
-    return true;
+    return true
 };
 
 

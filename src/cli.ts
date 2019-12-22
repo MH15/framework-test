@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-import { join } from "path";
-import { readFileSync, writeFileSync } from "fs";
-import { buildWatch } from "./builder";
-import { LiveServer } from './server/live-server';
-import { newDir } from "./utils/file";
-import { parsing } from "./utils/dom/parser";
+import { join } from "path"
+import { readFileSync, writeFileSync } from "fs"
+import { buildWatch } from "./builder"
+import { LiveServer } from './server/live-server'
+import { newDir } from "./utils/file"
+import { parsing } from "./utils/dom/current-parser"
 const WebSocket = require("ws")
 
-const commander = require('commander');
-const program = new commander.Command();
+const commander = require('commander')
+const program = new commander.Command()
 
 
 let baseDir = process.cwd()
@@ -25,7 +25,7 @@ h1 {
 
 <script></script>
 `
-var copydir = require('copy-dir');
+var copydir = require('copy-dir')
 
 const version = require('../package.json').version
 
@@ -55,7 +55,7 @@ program.command('create <type> <name>')
                 console.log("DIRRR", dirComponents)
                 newDir(dirComponents)
                 writeFileSync(join(dirComponents, name + ".component"), component)
-                break;
+                break
             case 'controller':
                 throw new Error('Controller creation not yet implemented.')
             default:
@@ -89,7 +89,7 @@ program.command('develop <name>')
             connection = ws
             buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT, connection)
 
-        });
+        })
 
 
     })
