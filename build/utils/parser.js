@@ -22,30 +22,40 @@ function parsing(content) {
     let root = parser.parseFromString(content);
     // console.log("root", root)
     // const root = parse(content);
-    let p = new HTMLParser(content);
-    // console.log("parser:", p)
-    // while (p.hasNext()) {
-    //     let next = p.consume()
-    //     if (next === "<") {
-    //         console.log("parseOpeningTag()")
-    //     }
-    // }
-    let nodes = p.parseNodes();
-    console.log("nodes:", JSON.stringify(nodes));
-    // for (let node of nodes) {
-    //     console.log("<--- NODE --->")
-    //     console.log(node)
-    //     console.log(" ")
-    // }
+    let nodes = new HTMLParser(content).parseNodes();
+    // If the document contains a root element, just return it. Otherwise, create one.
+    if (nodes.length == 1) {
+        root = nodes[0];
+    }
+    else {
+        root = DOM.elem("html", new Map(), nodes);
+    }
+    // console.log(nodes);
+    console.log(DOM.prettyPrinter(root));
 }
 exports.parsing = parsing;
 class HTMLParser {
     constructor(content) {
-        this.content = content;
+        this.input = content;
         this.index = 0;
     }
+    toString() {
+        return this.input.slice(this.index);
+    }
+    // Parse a sequence of sibling nodes.
+    parseNodes() {
+        let nodes = [];
+        while (true) {
+            this.consumeWhitespace();
+            if (!this.hasNext() || this.startsWith("</")) {
+                break;
+            }
+            nodes.push(this.parseNode());
+        }
+        return nodes;
+    }
     peek() {
-        return this.content.charAt(this.index);
+        return this.input.charAt(this.index);
     }
     consume() {
         if (this.hasNext()) {
@@ -58,11 +68,9 @@ class HTMLParser {
         }
     }
     hasNext() {
-        return this.index < this.content.length;
+        return this.index < this.input.length;
     }
-    /**
-     * Consume characters until test returns false
-     */
+    // Consume characters until test returns false
     consumeWhile(test) {
         let result = "";
         while (this.hasNext() && test(this.peek())) {
@@ -73,11 +81,11 @@ class HTMLParser {
     // Does the current input start with the given string?
     startsWith(s) {
         let result = true;
-        if (this.index + s.length > this.content.length) {
+        if (this.index + s.length > this.input.length) {
             result = false;
         }
         else {
-            let compare = this.content.slice(this.index, this.index + s.length);
+            let compare = this.input.slice(this.index, this.index + s.length);
             if (compare != s) {
                 result = false;
             }
@@ -89,7 +97,7 @@ class HTMLParser {
      */
     consumeWhitespace() {
         this.consumeWhile((char) => {
-            return ' \t\n\r\v'.indexOf(char);
+            return ' \t\n\r\v'.indexOf(char) >= 0;
         });
     }
     /**
@@ -102,12 +110,10 @@ class HTMLParser {
     parseNode() {
         if (this.peek() === "<") {
             let el = this.parseElement();
-            console.log("parsed element:", el);
             return el;
         }
         else {
             let text = this.parseText();
-            console.log("parsed text:", text);
             return text;
         }
     }
@@ -116,11 +122,7 @@ class HTMLParser {
         let innerHTML = this.consumeWhile((char) => {
             return char != "<";
         });
-        return {
-            children: [],
-            nodeType: DOM.NodeType.Text,
-            data: innerHTML
-        };
+        return DOM.text(innerHTML);
     }
     parseElement() {
         // Opening tag
@@ -133,16 +135,9 @@ class HTMLParser {
         // Closing tag
         assert_1.equal(this.consume(), "<");
         assert_1.equal(this.consume(), "/");
-        assert_1.equal(this.parseTagName, tagName);
+        assert_1.equal(this.parseTagName(), tagName);
         assert_1.equal(this.consume(), ">");
-        return {
-            children,
-            nodeType: DOM.NodeType.Element,
-            data: {
-                tagName,
-                attributes
-            }
-        };
+        return DOM.elem(tagName, attributes, children);
     }
     // Parse a single name="value" pair.
     parseAttribute() {
@@ -173,18 +168,6 @@ class HTMLParser {
             attributes.set(pair.key, pair.value);
         }
         return attributes;
-    }
-    // Parse a sequence of sibling nodes.
-    parseNodes() {
-        let nodes = [];
-        while (true) {
-            this.consumeWhitespace();
-            if (!this.hasNext() || this.startsWith("</")) {
-                break;
-            }
-            nodes.push(this.parseNode());
-        }
-        return nodes;
     }
 }
 function isAlphaNumeric(str) {
