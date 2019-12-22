@@ -1,4 +1,5 @@
 import * as DOM from "./dom"
+import * as assert from "assert"
 
 export class HTMLParser {
     input: string
@@ -100,19 +101,19 @@ export class HTMLParser {
     }
     parseElement(): DOM.Node {
         // Opening tag
-        equal(this.consume(), "<")
+        assert.equal(this.consume(), "<")
         let tagName = this.parseTagName()
         let attributes = this.parseAttributes()
-        equal(this.consume(), ">")
+        assert.equal(this.consume(), ">")
 
         // Contents
         let children = this.parseNodes()
 
         // Closing tag
-        equal(this.consume(), "<")
-        equal(this.consume(), "/")
-        equal(this.parseTagName(), tagName)
-        equal(this.consume(), ">")
+        assert.equal(this.consume(), "<")
+        assert.equal(this.consume(), "/")
+        assert.equal(this.parseTagName(), tagName)
+        assert.equal(this.consume(), ">")
 
         return DOM.elem(tagName, attributes, children)
     }
@@ -120,7 +121,7 @@ export class HTMLParser {
     // Parse a single name="value" pair.
     parseAttribute(): { key: string, value: string } {
         let key = this.parseTagName();
-        equal(this.consume(), "=")
+        assert.equal(this.consume(), "=")
         let value = this.parseAttributeValue();
         return { key, value };
     }

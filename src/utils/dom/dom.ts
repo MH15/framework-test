@@ -80,7 +80,7 @@ function padding(level: number): string {
 function printAttributes(attributes: Map<string, string>) {
     let result = []
     attributes.forEach((key, value) => {
-        result.push(`key="${value}"`)
+        result.push(`${value}="${key}"`)
     })
     return result.join(" ")
 }

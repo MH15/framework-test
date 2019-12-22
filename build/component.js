@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = require("fs");
-const parser_1 = require("./utils/parser");
+const parser_1 = require("./utils/dom/parser");
 const path_1 = require("path");
 const file_1 = require("./utils/file");
 const sass = require('node-sass');

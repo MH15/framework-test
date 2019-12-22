@@ -1,6 +1,6 @@
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "fs"
-import { parseHTML } from './utils/parser';
+import { parseHTML } from './utils/dom/parser';
 
 import { join, parse } from "path";
 import { newDir } from "./utils/file";

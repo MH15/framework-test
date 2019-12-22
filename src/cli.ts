@@ -5,7 +5,7 @@ import { readFileSync, writeFileSync } from "fs";
 import { buildWatch } from "./builder";
 import { LiveServer } from './server/live-server';
 import { newDir } from "./utils/file";
-import { parsing } from "./utils/parser";
+import { parsing } from "./utils/dom/parser";
 const WebSocket = require("ws")
 
 const commander = require('commander');
