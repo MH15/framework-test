@@ -5,45 +5,77 @@ enum NodeType {
     Comment
 }
 
+enum TagStyle {
+    Default,
+    SelfClosing,
+    Void
+}
+
 interface ElementData {
     tagName?: string
-    attributes?: Map<string, string>
+    attributes?: AttrMap
     innerHTML?: string
 }
-interface Node {
-    nodeType: NodeType
+// interface Node {
+//     kind: NodeType
+//     children: Node[]
+//     data: Type
+// }
+
+type AttrMap = Map<string, string>
+
+
+
+interface Element {
+    kind: NodeType.Element,
     children: Node[]
-    data: ElementData
-
+    tagName: string,
+    attributes: AttrMap
+    tagStyle: TagStyle
+}
+interface Text {
+    kind: NodeType.Text,
+    data: string
+}
+interface Comment {
+    kind: NodeType.Comment,
+    data: string
 }
 
-function elem(tagName: string, attributes: Map<string, string>, children: Node[]): Node {
+type Node = Text | Element | Comment
+
+
+
+function elem(tagName: string, attributes: AttrMap, children: Node[]): Node {
     return {
+        kind: NodeType.Element,
         children,
-        nodeType: NodeType.Element,
-        data: {
-            tagName,
-            attributes
-        }
+        tagName,
+        attributes,
+        tagStyle: TagStyle.Default
     }
 }
 
-function text(innerHTML: string): Node {
+function selfClosing(tagName: string, attributes: AttrMap, children: Node[]): Node {
     return {
-        nodeType: NodeType.Text,
-        children: [],
-        data: {
-            innerHTML
-        }
+        kind: NodeType.Element,
+        children,
+        tagName,
+        attributes,
+        tagStyle: TagStyle.SelfClosing
     }
 }
-function comment(innerHTML: string): Node {
+
+function text(data: string): Node {
     return {
-        nodeType: NodeType.Comment,
-        children: [],
-        data: {
-            innerHTML
-        }
+        kind: NodeType.Text,
+        data
+    }
+}
+function comment(data: string): Node {
+    return {
+        kind: NodeType.Comment,
+        data
     }
 }
 
@@ -57,23 +89,31 @@ function prettyPrinter(node: Node, level?: number): string {
     }
     let result = ""
 
-    if (node.nodeType === NodeType.Text) {
-        result += padding(level) + node.data.innerHTML + "\n"
-    } else if (node.nodeType === NodeType.Element) {
-        result += padding(level) + "<"
-        result += node.data.tagName
-        if (node.data.attributes != null && node.data.attributes.size) {
-            result += " " + printAttributes(node.data.attributes)
-        }
-        result += ">" + "\n"
-        // recursion
-        node.children.forEach(child => {
-            result += prettyPrinter(child, level + 1)
-        })
+    switch (node.kind) {
+        case NodeType.Text:
+            result += padding(level) + node.data + "\n"
+            break
+        case NodeType.Element:
+            result += padding(level) + "<"
+            result += node.tagName
+            if (node.attributes != null && node.attributes.size) {
+                result += " " + printAttributes(node.attributes)
+            }
+            if (node.tagStyle == TagStyle.Default) {
+                result += ">" + "\n"
+                // recursion
+                node.children.forEach(child => {
+                    result += prettyPrinter(child, level + 1)
+                })
 
-        result += padding(level) + "</" + node.data.tagName + ">" + "\n"
-    } else if (node.nodeType = NodeType.Comment) {
-        result += padding(level) + "<!--" + node.data.innerHTML + "-->" + "\n"
+                result += padding(level) + "</" + node.tagName + ">" + "\n"
+            } else if (node.tagStyle == TagStyle.SelfClosing) {
+                result += "/>" + "\n"
+            }
+            break
+        case NodeType.Comment:
+            result += padding(level) + "<!--" + node.data + "-->" + "\n"
+            break
     }
 
     return result
@@ -97,4 +137,4 @@ function printAttributes(attributes: Map<string, string>) {
 }
 
 
-export { Node, NodeType, elem, text, comment, prettyPrinter }
+export { Node, NodeType, elem, selfClosing, text, comment, prettyPrinter }

@@ -71,18 +71,31 @@ export class HTMLParser extends Parser {
         assert.equal(this.consume(), "<")
         let tagName = this.parseTagName()
         let attributes = this.parseAttributes()
-        assert.equal(this.consume(), ">")
 
-        // Contents
-        let children = this.parseNodes()
+        // end of opening tag can be either /> or >
+        if (this.startsWith(">")) {
+            // normal shit
+            assert.equal(this.consume(), ">")
 
-        // Closing tag
-        assert.equal(this.consume(), "<")
-        assert.equal(this.consume(), "/")
-        assert.equal(this.parseTagName(), tagName)
-        assert.equal(this.consume(), ">")
+            // Contents
+            let children = this.parseNodes()
 
-        return DOM.elem(tagName, attributes, children)
+            // Closing tag
+            assert.equal(this.consume(), "<")
+            assert.equal(this.consume(), "/")
+            assert.equal(this.parseTagName(), tagName)
+            assert.equal(this.consume(), ">")
+
+            return DOM.elem(tagName, attributes, children)
+        } else if (this.startsWith("/>")) {
+            // unbalanced tag shit
+            assert.equal(this.consume(), "/")
+            assert.equal(this.consume(), ">")
+            return DOM.selfClosing(tagName, attributes, [])
+        } else {
+            console.error("forgot to properly close tags")
+        }
+
     }
 
     // Parse a single name="value" pair.
@@ -109,7 +122,7 @@ export class HTMLParser extends Parser {
         let attributes = new Map()
         while (true) {
             this.consumeWhitespace()
-            if (this.peek() == ">") {
+            if (this.peek() == ">" || this.startsWith("/>")) {
                 break
             }
             let pair = this.parseAttribute()

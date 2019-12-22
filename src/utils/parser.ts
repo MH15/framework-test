@@ -59,6 +59,7 @@ class Parser {
             return ' \t\n\r\v'.indexOf(char) >= 0
         })
     }
+
 }
 
 export { Parser }

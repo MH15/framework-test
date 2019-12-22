@@ -3,7 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const DOM = require("./dom");
 const traversal_1 = require("./traversal");
 function parsing(content) {
-    let nodes = new html_parser_1.HTMLParser(content).parseNodes();
+    var hrstart = process.hrtime();
+    let nodes;
+    for (let i = 0; i < 10000; i++) {
+        nodes = new html_parser_1.HTMLParser(content).parseNodes();
+    }
+    let hrend = process.hrtime(hrstart);
+    console.info('Execution time (hr): %ds %dms', hrend[0], hrend[1] / 1000000);
     let root;
     // If the document contains a root element, just return it. Otherwise, create one.
     if (nodes.length == 1) {
@@ -15,9 +21,11 @@ function parsing(content) {
     console.log(DOM.prettyPrinter(root));
     // sample usage of a mutation
     traversal_1.mutation(root, (n) => {
-        return n.nodeType === DOM.NodeType.Element;
+        return n.kind === DOM.NodeType.Element;
     }, (n) => {
-        n.data.tagName = "trick";
+        if (n.kind == DOM.NodeType.Element) {
+            n.tagName = "trick";
+        }
     });
     /**
      * Algorithm:
@@ -25,7 +33,7 @@ function parsing(content) {
      *    - check if node is one of the included nodes
      *    - if so, link other shit in
      */
-    console.log(DOM.prettyPrinter(root));
+    // console.log(DOM.prettyPrinter(root))
 }
 exports.parsing = parsing;
 const DomParser = require('dom-parser');

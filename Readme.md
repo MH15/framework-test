@@ -16,8 +16,14 @@ Working copy of a framework for building websites.
 - Templating engine
 
 ## Development TODO
-- purge useless things in `neanderthal`
-- need to add support for "script nesting level" in the html parser [see this](https://html.spec.whatwg.org/multipage/parsing.html#parsing)
+- (done) purge useless things in `neanderthal`
+
+## Parser TODO
+- (done) comments
+- (done) self closing tags
+- void tags
+- "script nesting level"
+
 
 
 

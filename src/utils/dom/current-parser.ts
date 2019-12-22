@@ -4,7 +4,15 @@ import { mutation } from "./traversal"
 
 
 export function parsing(content: string): any {
-    let nodes = new HTMLParser(content).parseNodes()
+
+    var hrstart = process.hrtime()
+    let nodes
+    for (let i = 0; i < 100; i++) {
+        nodes = new HTMLParser(content).parseNodes()
+    }
+    let hrend = process.hrtime(hrstart)
+    console.info('Execution time (hr): %ds %dms', hrend[0], hrend[1] / 1000000)
+
     let root: DOM.Node
 
     // If the document contains a root element, just return it. Otherwise, create one.
@@ -19,9 +27,11 @@ export function parsing(content: string): any {
 
     // sample usage of a mutation
     mutation(root, (n) => {
-        return n.nodeType === DOM.NodeType.Element
+        return n.kind === DOM.NodeType.Element
     }, (n) => {
-        n.data.tagName = "trick"
+        if (n.kind == DOM.NodeType.Element) {
+            n.tagName = "trick"
+        }
     })
 
     /**
@@ -31,7 +41,7 @@ export function parsing(content: string): any {
      *    - if so, link other shit in
      */
 
-    console.log(DOM.prettyPrinter(root))
+    // console.log(DOM.prettyPrinter(root))
 }
 
 
@@ -49,6 +59,7 @@ export function parsing(content: string): any {
 const DomParser = require('dom-parser')
 const parser = new DomParser()
 import { HTMLParser } from "./html-parser"
+import { stringify } from "querystring"
 
 /**
  * TODO: Legacy

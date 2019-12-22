@@ -14,7 +14,7 @@ function mutation(node, condition, mutate) {
     if (condition(node) === true) {
         mutate(node);
     }
-    if (node.nodeType === DOM.NodeType.Element) {
+    if (node.kind === DOM.NodeType.Element) {
         node.children.forEach(child => {
             mutation(child, condition, mutate);
         });

@@ -7,34 +7,43 @@ var NodeType;
     NodeType[NodeType["Comment"] = 2] = "Comment";
 })(NodeType || (NodeType = {}));
 exports.NodeType = NodeType;
+var TagStyle;
+(function (TagStyle) {
+    TagStyle[TagStyle["Default"] = 0] = "Default";
+    TagStyle[TagStyle["SelfClosing"] = 1] = "SelfClosing";
+    TagStyle[TagStyle["Void"] = 2] = "Void";
+})(TagStyle || (TagStyle = {}));
 function elem(tagName, attributes, children) {
     return {
+        kind: NodeType.Element,
         children,
-        nodeType: NodeType.Element,
-        data: {
-            tagName,
-            attributes
-        }
+        tagName,
+        attributes,
+        tagStyle: TagStyle.Default
     };
 }
 exports.elem = elem;
-function text(innerHTML) {
+function selfClosing(tagName, attributes, children) {
     return {
-        nodeType: NodeType.Text,
-        children: [],
-        data: {
-            innerHTML
-        }
+        kind: NodeType.Element,
+        children,
+        tagName,
+        attributes,
+        tagStyle: TagStyle.SelfClosing
+    };
+}
+exports.selfClosing = selfClosing;
+function text(data) {
+    return {
+        kind: NodeType.Text,
+        data
     };
 }
 exports.text = text;
-function comment(innerHTML) {
+function comment(data) {
     return {
-        nodeType: NodeType.Comment,
-        children: [],
-        data: {
-            innerHTML
-        }
+        kind: NodeType.Comment,
+        data
     };
 }
 exports.comment = comment;
@@ -46,24 +55,31 @@ function prettyPrinter(node, level) {
         level = 0;
     }
     let result = "";
-    if (node.nodeType === NodeType.Text) {
-        result += padding(level) + node.data.innerHTML + "\n";
-    }
-    else if (node.nodeType === NodeType.Element) {
-        result += padding(level) + "<";
-        result += node.data.tagName;
-        if (node.data.attributes != null && node.data.attributes.size) {
-            result += " " + printAttributes(node.data.attributes);
-        }
-        result += ">" + "\n";
-        // recursion
-        node.children.forEach(child => {
-            result += prettyPrinter(child, level + 1);
-        });
-        result += padding(level) + "</" + node.data.tagName + ">" + "\n";
-    }
-    else if (node.nodeType = NodeType.Comment) {
-        result += padding(level) + "<!--" + node.data.innerHTML + "-->" + "\n";
+    switch (node.kind) {
+        case NodeType.Text:
+            result += padding(level) + node.data + "\n";
+            break;
+        case NodeType.Element:
+            result += padding(level) + "<";
+            result += node.tagName;
+            if (node.attributes != null && node.attributes.size) {
+                result += " " + printAttributes(node.attributes);
+            }
+            if (node.tagStyle == TagStyle.Default) {
+                result += ">" + "\n";
+                // recursion
+                node.children.forEach(child => {
+                    result += prettyPrinter(child, level + 1);
+                });
+                result += padding(level) + "</" + node.tagName + ">" + "\n";
+            }
+            else if (node.tagStyle == TagStyle.SelfClosing) {
+                result += "/>" + "\n";
+            }
+            break;
+        case NodeType.Comment:
+            result += padding(level) + "<!--" + node.data + "-->" + "\n";
+            break;
     }
     return result;
 }
