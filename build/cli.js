@@ -95,7 +95,21 @@ program.command('parse <name>')
     const DEVELOP_ROOT = path_1.join(baseDir, "dist", "develop");
     let file = fs_1.readFileSync(path_1.join(DIR_SEARCH, name + ".component"), "utf8");
     // console.log(file)
-    current_parser_1.parsing(file);
+    let root = current_parser_1.parsing(file);
+    // TODO: combine LiveServer and WebSocketController into one class that extends Server
+    let liveServer = new live_server_1.LiveServer(DEVELOP_ROOT);
+    yield liveServer.start(8081);
+    console.log("starting liveserver");
+    const wss = new WebSocket.Server({ port: 8089 });
+    let connection;
+    wss.on('connection', (ws) => {
+        ws.on('message', message => {
+            console.log(`Received message => ${message}`);
+        });
+        ws.send('ho!');
+        connection = ws;
+        builder_1.buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT, connection);
+    });
 }));
 program.parse(process.argv);
 //# sourceMappingURL=cli.js.map

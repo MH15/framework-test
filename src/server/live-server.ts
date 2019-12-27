@@ -38,15 +38,15 @@ export class LiveServer extends Server {
     }
 
     handle(req: http.IncomingMessage, res: http.ServerResponse) {
-        const parsedUrl = url.parse(req.url);
-        const sanitizePath = path.normalize(parsedUrl.pathname).replace(/^(\.\.[\/\\])+/, '');
-        let pathname = path.join(process.cwd(), "dist", "develop", sanitizePath);
+        const parsedUrl = url.parse(req.url)
+        const sanitizePath = path.normalize(parsedUrl.pathname).replace(/^(\.\.[\/\\])+/, '')
+        let pathname = path.join(process.cwd(), "dist", "develop", sanitizePath)
 
         fs.exists(pathname, function (exist) {
             if (!exist) {
-                res.statusCode = 404;
-                res.end(`File ${pathname} not found!`);
-                return;
+                res.statusCode = 404
+                res.end(`File ${pathname} not found!`)
+                return
             }
 
             /**
@@ -56,7 +56,7 @@ export class LiveServer extends Server {
             // if is a directory, then look for index.html
             if (fs.statSync(pathname).isDirectory()) {
                 // pathname += '/index.html';
-                pathname += '/index.html';
+                pathname += '/index.html'
                 let p = path.join(process.cwd(), "dist", "develop", "develop.ejs")
                 // let developHTML = Mustache.render(fs.readFileSync(p, "utf8"), {
                 //     name: "bitch",
@@ -64,6 +64,7 @@ export class LiveServer extends Server {
                 //     source: "temp.html"
                 // })
 
+                // let developHTML = 
                 let developHTML = ejs.render(fs.readFileSync(p, "utf8"), {
                     name: "test name",
                     type: "component",
@@ -71,20 +72,20 @@ export class LiveServer extends Server {
                 })
                 // console.log("DEV", developHTML)
 
-                res.setHeader('Content-type', mimeType[".html"] || 'text/plain');
-                res.end(developHTML);
+                res.setHeader('Content-type', mimeType[".html"] || 'text/plain')
+                res.end(developHTML)
             } else {
                 // read file from file system
                 fs.readFile(pathname, function (err, data) {
                     if (err) {
-                        res.statusCode = 500;
-                        res.end(`Error getting the file: ${err}.`);
+                        res.statusCode = 500
+                        res.end(`Error getting the file: ${err}.`)
                     } else {
                         // based on the URL path, extract the file extention. e.g. .js, .doc, ...
-                        const ext = path.parse(pathname).ext;
+                        const ext = path.parse(pathname).ext
                         // if the file is found, set Content-type and send data
-                        res.setHeader('Content-type', mimeType[ext] || 'text/plain');
-                        res.end(data);
+                        res.setHeader('Content-type', mimeType[ext] || 'text/plain')
+                        res.end(data)
                     }
                 })
             }
@@ -142,4 +143,4 @@ const mimeType = {
     '.doc': 'application/msword',
     '.eot': 'appliaction/vnd.ms-fontobject',
     '.ttf': 'aplication/font-sfnt'
-};
+}

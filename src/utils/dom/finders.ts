@@ -9,7 +9,7 @@ import * as DOM from "./dom"
 function getElementsByTagName(root: DOM.Node, tagName: string): DOM.Node[] {
     return getAllElements(root, (node) => {
         if (node.kind == DOM.NodeType.Element) {
-            if (node.tagName == tagName) {
+            if (node.data == tagName) {
                 return true
             }
         }
@@ -35,8 +35,8 @@ function getElementsByClassName(root: DOM.Node, tagName: string): DOM.Node[] {
 function getElementById(root: DOM.Node, id: string): DOM.Node {
     return getElement(root, (node) => {
         if (node.kind == DOM.NodeType.Element) {
-            if (node.attributes.has("id")) {
-                if (node.attributes.get("id") === id) {
+            if (node.hasAttribute("id")) {
+                if (node.getAttribute("id") === id) {
                     return true
                 }
             }

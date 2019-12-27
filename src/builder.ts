@@ -2,9 +2,9 @@
  * Builder module.
  */
 
-import { Component } from './component';
-import { join, parse } from "path";
-import { readFileSync, writeFileSync } from 'fs';
+import { Component } from './component'
+import { join, parse } from "path"
+import { readFileSync, writeFileSync } from 'fs'
 
 const Mustache = require("mustache")
 
@@ -12,7 +12,7 @@ const nunjucks = require("nunjucks")
 
 const ejs = require("ejs")
 import * as chokidar from "chokidar"
-import { WebSocketController } from './server/live-server';
+import { WebSocketController } from './server/live-server'
 
 
 export function buildAll(component: Component, dirOut: string, dirInclude: string): Set<string> {
@@ -58,13 +58,14 @@ export function buildWatch(dirOut: string, dirInclude: string, pathRoot: string,
         ignoreInitial: true
     }).on('all', (event, path) => {
         if (buildSetInitial.has(parse(path).name)) {
+            console.log("Changes made. Building...")
             root.load(pathRoot)
             buildSetInitial = buildAll(root, dirOut, dirInclude)
         }
         wss.send('reload')
-    });
-
+    })
 }
+
 export function combine(component: Component, dirOut: string, dirSearch: string): string {
     let includes = {}
     let joinedStyles = ""

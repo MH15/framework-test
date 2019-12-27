@@ -5,6 +5,7 @@ const current_parser_1 = require("./utils/dom/current-parser");
 const path_1 = require("path");
 const file_1 = require("./utils/file");
 const sass = require('node-sass');
+const finders_1 = require("./utils/dom/finders");
 const nunjucks = require("nunjucks");
 /**
  * A Single File Component.
@@ -20,20 +21,10 @@ class Component {
     load(filepath) {
         this.file = fs_1.readFileSync(filepath, "utf8");
         this.name = path_1.parse(filepath).name;
-        let a = current_parser_1.parseHTML(this.file);
-        this.template = {
-            dom: a.getElementsByTagName("template")[0],
-            body: a.getElementsByTagName("template")[0].innerHTML
-        };
-        this.style = {
-            dom: a.getElementsByTagName("style")[0],
-            body: a.getElementsByTagName("style")[0].innerHTML,
-            css: ""
-        };
-        this.script = {
-            dom: a.getElementsByTagName("script")[0],
-            body: a.getElementsByTagName("script")[0].innerHTML
-        };
+        let dom = current_parser_1.parseHTML(this.file);
+        this.template = finders_1.getElementsByTagName(dom, "template")[0];
+        this.style = finders_1.getElementsByTagName(dom, "style")[0];
+        this.script = finders_1.getElementsByTagName(dom, "script")[0];
     }
     /**
      * Build template, style, and scripts to buildPath
@@ -49,18 +40,18 @@ class Component {
         file_1.newDir(path_1.join(buildPath, "script"));
         // build mustache to dist/ejs folder
         let mustachePath = path_1.join(buildPath, "njk", this.name + ".njk");
-        fs_1.writeFileSync(mustachePath, this.template.body);
+        fs_1.writeFileSync(mustachePath, this.template.innerHTML);
         // build style to dist/style folder
         let stylePath = path_1.join(buildPath, "style", this.name + ".css");
-        this.style.css = compileStyles(this.style);
-        fs_1.writeFileSync(stylePath, this.style.css);
-        // build script to dist/style folder
+        let css = compileStyles(this.style);
+        fs_1.writeFileSync(stylePath, this.style.innerHTML);
+        // build script to dist/script folder
         let scriptPath = path_1.join(buildPath, "script", this.name + ".js");
-        fs_1.writeFileSync(scriptPath, this.script.body);
+        fs_1.writeFileSync(scriptPath, this.script.innerHTML);
         // build all referenced files as well
-        let r = this.template.dom.getAttribute("include");
+        let r = this.template.getAttribute("include");
         if (r) {
-            let referencedComponents = this.template.dom.getAttribute("include").split(",");
+            let referencedComponents = this.template.getAttribute("include").split(",");
             referencedComponents.forEach(name => {
                 // console.log(`Building component "${name}".`)
                 let refPath = path_1.join(includePath, name + ".component");
@@ -82,19 +73,19 @@ exports.Component = Component;
 * @param {Node} style the DOM Node
 */
 function compileStyles(style) {
-    let styleLang = style.dom.getAttribute("lang") || "css";
+    let styleLang = style.getAttribute("lang") || "css";
     let styleResult;
     switch (styleLang) {
         case "scss":
             styleResult = sass.renderSync({
-                data: style.body
+                data: style.innerHTML
             }).css.toString();
             break;
         case "less":
             // TODO: implement less
             break;
         default:
-            styleResult = style.body;
+            styleResult = style.innerHTML;
             break;
     }
     return styleResult;

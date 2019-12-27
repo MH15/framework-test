@@ -104,7 +104,25 @@ program.command('parse <name>')
 
         let file = readFileSync(join(DIR_SEARCH, name + ".component"), "utf8")
         // console.log(file)
-        parsing(file)
+        let root = parsing(file)
+
+        // TODO: combine LiveServer and WebSocketController into one class that extends Server
+        let liveServer = new LiveServer(DEVELOP_ROOT)
+        await liveServer.start(8081)
+
+        console.log("starting liveserver")
+
+        const wss = new WebSocket.Server({ port: 8089 })
+        let connection
+        wss.on('connection', (ws) => {
+            ws.on('message', message => {
+                console.log(`Received message => ${message}`)
+            })
+            ws.send('ho!')
+            connection = ws
+            buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT, connection)
+
+        })
 
     })
 

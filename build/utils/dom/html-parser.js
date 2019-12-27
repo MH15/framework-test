@@ -130,7 +130,7 @@ class HTMLParser extends parser_1.Parser {
             // unbalanced tag shit
             assert.equal(this.consume(), "/");
             assert.equal(this.consume(), ">");
-            return DOM.selfClosing(tagName, attributes, []);
+            return DOM.selfClosing(tagName, attributes);
         }
         else {
             console.error("forgot to properly close tags");
@@ -199,7 +199,7 @@ function scriptProcessing(node) {
     let scriptMode = false;
     switch (node.kind) {
         case DOM.NodeType.Element:
-            if (node.tagName == "script" && node.children.length > 0) {
+            if (node.data == "script" && node.children.length > 0) {
                 scriptMode = true;
             }
             break;

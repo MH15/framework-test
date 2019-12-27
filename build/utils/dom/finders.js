@@ -10,7 +10,7 @@ const DOM = require("./dom");
 function getElementsByTagName(root, tagName) {
     return traversal_1.getAllElements(root, (node) => {
         if (node.kind == DOM.NodeType.Element) {
-            if (node.tagName == tagName) {
+            if (node.data == tagName) {
                 return true;
             }
         }
@@ -35,8 +35,8 @@ function getElementsByClassName(root, tagName) {
 function getElementById(root, id) {
     return traversal_1.getElement(root, (node) => {
         if (node.kind == DOM.NodeType.Element) {
-            if (node.attributes.has("id")) {
-                if (node.attributes.get("id") === id) {
+            if (node.hasAttribute("id")) {
+                if (node.getAttribute("id") === id) {
                     return true;
                 }
             }
