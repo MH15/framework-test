@@ -31,24 +31,30 @@ exports.mutation = mutation;
  */
 function getElement(node, condition) {
     let foundNode = null;
-    console.log("n", node);
     if (node.kind === DOM.NodeType.Element) {
         if (condition(node) === true) {
-            console.log("NODE ELEMENT CONDITION PASS");
             foundNode = node;
-            // return
         }
         else {
-            console.log("NODE ELEMENT CONDITION FAIL");
             node.children.forEach(child => {
-                foundNode = getElement(child, condition);
-                // if (foundNode != null) {
-                return foundNode;
-                // }
+                foundNode = getElement(child, condition) || foundNode;
             });
         }
     }
     return foundNode;
 }
 exports.getElement = getElement;
+function getElementById(node, id) {
+    return getElement(node, (node) => {
+        if (node.kind == DOM.NodeType.Element) {
+            if (node.attributes.has("id")) {
+                if (node.attributes.get("id") === id) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    });
+}
+exports.getElementById = getElementById;
 //# sourceMappingURL=traversal.js.map

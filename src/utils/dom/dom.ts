@@ -45,6 +45,8 @@ type Node = Text | Element | Comment
 
 
 
+
+
 function elem(tagName: string, attributes: AttrMap, children: Node[]): Node {
     return {
         kind: NodeType.Element,

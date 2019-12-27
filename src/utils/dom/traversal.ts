@@ -33,20 +33,12 @@ function mutation(node: DOM.Node, condition: Condition, mutate: Mutation): void 
  */
 function getElement(node: DOM.Node, condition: Condition): DOM.Node {
     let foundNode = null
-
-    console.log("n", node)
     if (node.kind === DOM.NodeType.Element) {
         if (condition(node) === true) {
-            console.log("NODE ELEMENT CONDITION PASS")
             foundNode = node
-            // return
         } else {
-            console.log("NODE ELEMENT CONDITION FAIL")
             node.children.forEach(child => {
-                foundNode = getElement(child, condition)
-                // if (foundNode != null) {
-                return foundNode
-                // }
+                foundNode = getElement(child, condition) || foundNode
             })
         }
     }
@@ -54,4 +46,19 @@ function getElement(node: DOM.Node, condition: Condition): DOM.Node {
 }
 
 
-export { mutation, getElement }
+
+function getElementById(node: DOM.Node, id: string): DOM.Node {
+    return getElement(node, (node) => {
+        if (node.kind == DOM.NodeType.Element) {
+            if (node.attributes.has("id")) {
+                if (node.attributes.get("id") === id) {
+                    return true
+                }
+            }
+        }
+        return false
+    })
+}
+
+
+export { mutation, getElement, getElementById }

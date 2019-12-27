@@ -1,5 +1,5 @@
 import * as DOM from "./dom"
-import { mutation, getElement } from "./traversal"
+import { mutation, getElement, getElementById } from "./traversal"
 
 
 
@@ -56,15 +56,21 @@ export function parsing(content: string): any {
     console.log(DOM.prettyPrinter(root))
 
     // sample usage of getElement
-    let el = getElement(root, (el) => {
-        if (el.kind === DOM.NodeType.Element) {
-            if (el.tagName == "FancyHeader") {
-                return true
-            }
-        }
-        return false
-    })
-    console.log(el)
+    // let el = getElement(root, (el) => {
+    //     if (el.kind === DOM.NodeType.Element) {
+    //         if (el.tagName == "FancyHeader") {
+    //             return true
+    //         }
+    //     }
+    //     return false
+    // })
+
+
+    let elByID = getElementById(root, "a")
+    console.log(elByID)
+
+
+
 }
 
 

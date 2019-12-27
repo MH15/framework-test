@@ -47,15 +47,16 @@ function parsing(content) {
      */
     console.log(DOM.prettyPrinter(root));
     // sample usage of getElement
-    let el = traversal_1.getElement(root, (el) => {
-        if (el.kind === DOM.NodeType.Element) {
-            if (el.tagName == "FancyHeader") {
-                return true;
-            }
-        }
-        return false;
-    });
-    console.log(el);
+    // let el = getElement(root, (el) => {
+    //     if (el.kind === DOM.NodeType.Element) {
+    //         if (el.tagName == "FancyHeader") {
+    //             return true
+    //         }
+    //     }
+    //     return false
+    // })
+    let elByID = traversal_1.getElementById(root, "a");
+    console.log(elByID);
 }
 exports.parsing = parsing;
 const DomParser = require('dom-parser');
