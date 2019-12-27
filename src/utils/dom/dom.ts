@@ -16,11 +16,6 @@ interface ElementData {
     attributes?: AttrMap
     innerHTML?: string
 }
-// interface Node {
-//     kind: NodeType
-//     children: Node[]
-//     data: Type
-// }
 
 type AttrMap = Map<string, string>
 

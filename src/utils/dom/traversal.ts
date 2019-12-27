@@ -24,8 +24,34 @@ function mutation(node: DOM.Node, condition: Condition, mutate: Mutation): void 
 }
 
 /**
- * Find a node in the tree
+ * Find an Element in the tree.
+ * @param node: the DOM.Node object to begin the search on
+ * @param condition: if condition returns true on the current Node, return the
+ * current Node
+ * @returns the DOM.Node that meets Condition if a Node is found that meets the
+ * condition, else returns null
  */
+function getElement(node: DOM.Node, condition: Condition): DOM.Node {
+    let foundNode = null
+
+    console.log("n", node)
+    if (node.kind === DOM.NodeType.Element) {
+        if (condition(node) === true) {
+            console.log("NODE ELEMENT CONDITION PASS")
+            foundNode = node
+            // return
+        } else {
+            console.log("NODE ELEMENT CONDITION FAIL")
+            node.children.forEach(child => {
+                foundNode = getElement(child, condition)
+                // if (foundNode != null) {
+                return foundNode
+                // }
+            })
+        }
+    }
+    return foundNode
+}
 
 
-export { mutation }
+export { mutation, getElement }

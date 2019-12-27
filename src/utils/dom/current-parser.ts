@@ -1,5 +1,5 @@
 import * as DOM from "./dom"
-import { mutation } from "./traversal"
+import { mutation, getElement } from "./traversal"
 
 
 
@@ -7,7 +7,7 @@ export function parsing(content: string): any {
 
     var hrstart = process.hrtime()
     let nodes
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 1; i++) {
         let parser = new HTMLParser(content)
         try {
             nodes = parser.parseNodes(null)
@@ -53,7 +53,18 @@ export function parsing(content: string): any {
      *    - if so, link other shit in
      */
 
-    // console.log(DOM.prettyPrinter(root))
+    console.log(DOM.prettyPrinter(root))
+
+    // sample usage of getElement
+    let el = getElement(root, (el) => {
+        if (el.kind === DOM.NodeType.Element) {
+            if (el.tagName == "FancyHeader") {
+                return true
+            }
+        }
+        return false
+    })
+    console.log(el)
 }
 
 

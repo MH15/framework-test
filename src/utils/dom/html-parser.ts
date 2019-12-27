@@ -12,6 +12,12 @@ export class HTMLParser extends Parser {
     // current operating mode
     // mode
 
+    /**
+     * Script nesting level.
+     * @see html.spec.whatwg.org/multipage/parsing.html#script-nesting-level
+     */
+    scriptNestingLevel = 0
+
     // Parse a sequence of sibling nodes.
     parseNodes(parent: DOM.Node): DOM.Node[] {
         let nodes = []
@@ -40,8 +46,9 @@ export class HTMLParser extends Parser {
     }
     // Parse a tag or attribute name.
     parseTagName(): string {
-        // return this.consumeWhile(isAlphaNumeric)
-        let regex = new RegExp(/[a-zA-Z0-9\-]/)
+        /* Tag names may contain alphanumeric 
+        characeters, dashes and underscores. */
+        let regex = new RegExp(/[a-zA-Z0-9\-_]/)
         return this.consumeWhile((char) => {
             return char.match(regex)
         })
@@ -102,10 +109,20 @@ export class HTMLParser extends Parser {
 
             // Contents
             let el = DOM.elem(tagName, attributes, [])
-            let children = this.parseNodes(el)
-            if (el.kind == DOM.NodeType.Element) {
-                el.children = children
+            let children = []
+            if (scriptProcessing(el)) {
+                // @ts-ignore
+                console.log("YES SCRIPT MODE", el.kind, el.tagName)
+                children = [this.parseText()]
+            } else {
+                // @ts-ignore
+                console.log("NO SCRIPT MODE", el.kind, el.tagName)
+                children = this.parseNodes(el)
+                if (el.kind == DOM.NodeType.Element) {
+                    el.children = children
+                }
             }
+
 
             // Closing tag
             assert.equal(this.consume(), "<")
@@ -113,6 +130,8 @@ export class HTMLParser extends Parser {
             assert.equal(this.parseTagName(), tagName)
             assert.equal(this.consume(), ">")
 
+            // Process Scripts properly.
+            scriptProcessing(el)
             return el
         } else if (this.startsWith("/>")) {
             // unbalanced tag shit
@@ -185,3 +204,47 @@ function isAlphaNumeric(str) {
 };
 
 
+/**
+ * If el is a <script>, follow the WHATWG spec to determine rules for parsing
+ * the <script> content. See the mention below for help with the specification.
+ * @see https://html.spec.whatwg.org/multipage/scripting.html#script-processing-model
+ * @param el the DOM node that may or may not be a script node
+ * @returns if the script nesting level should increase
+ */
+function scriptProcessing(node: DOM.Node): boolean {
+    let scriptMode = false
+    switch (node.kind) {
+        case DOM.NodeType.Element:
+            if (node.tagName == "script" && node.children.length > 0) {
+                console.log("YAAYAYYA")
+                scriptMode = true
+            }
+            break
+        default:
+            break
+    }
+
+    console.log("YA", scriptMode)
+    return scriptMode
+}
+
+
+function scriptTypeAttribute(attributes: Map<string, string>) {
+    let typeAttrEmpty = attributes.has("type") && attributes.get("type") == ""
+    let langAttrEmpty = attributes.has("language") && attributes.get("language") == ""
+    let typeAndLangMissing = attributes.has("type") && attributes.has("language")
+    if (typeAttrEmpty || langAttrEmpty || typeAndLangMissing) {
+
+    }
+
+    // TODO complete this implementation
+    /*
+    If either:
+    
+    the script element has a type attribute and its value is the empty string, or
+    the script element has no type attribute but it has a language attribute and that attribute's value is the empty string, or
+    the script element has neither a type attribute nor a language attribute, then
+    
+    ...let the script block's type string for this script element be
+    "text/javascript".*/
+}

@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const DOM = require("./dom");
+const traversal_1 = require("./traversal");
 function parsing(content) {
     var hrstart = process.hrtime();
     let nodes;
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 1; i++) {
         let parser = new html_parser_1.HTMLParser(content);
         try {
             nodes = parser.parseNodes(null);
@@ -44,7 +45,17 @@ function parsing(content) {
      *    - check if node is one of the included nodes
      *    - if so, link other shit in
      */
-    // console.log(DOM.prettyPrinter(root))
+    console.log(DOM.prettyPrinter(root));
+    // sample usage of getElement
+    let el = traversal_1.getElement(root, (el) => {
+        if (el.kind === DOM.NodeType.Element) {
+            if (el.tagName == "FancyHeader") {
+                return true;
+            }
+        }
+        return false;
+    });
+    console.log(el);
 }
 exports.parsing = parsing;
 const DomParser = require('dom-parser');
