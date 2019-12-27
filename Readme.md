@@ -1,4 +1,4 @@
-# About
+# About `new-parser` branch
 Working copy of a framework for building websites.
 
 # Structure
