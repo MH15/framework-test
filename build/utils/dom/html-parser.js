@@ -106,12 +106,12 @@ class HTMLParser extends parser_1.Parser {
             let children = [];
             if (scriptProcessing(el)) {
                 // @ts-ignore
-                console.log("YES SCRIPT MODE", el.kind, el.tagName);
+                // console.log("YES SCRIPT MODE", el.kind, el.tagName)
                 children = [this.parseText()];
             }
             else {
                 // @ts-ignore
-                console.log("NO SCRIPT MODE", el.kind, el.tagName);
+                // console.log("NO SCRIPT MODE", el.kind, el.tagName)
                 children = this.parseNodes(el);
                 if (el.kind == DOM.NodeType.Element) {
                     el.children = children;
@@ -200,14 +200,13 @@ function scriptProcessing(node) {
     switch (node.kind) {
         case DOM.NodeType.Element:
             if (node.tagName == "script" && node.children.length > 0) {
-                console.log("YAAYAYYA");
                 scriptMode = true;
             }
             break;
         default:
             break;
     }
-    console.log("YA", scriptMode);
+    // console.log("YA", scriptMode)
     return scriptMode;
 }
 function scriptTypeAttribute(attributes) {

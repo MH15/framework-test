@@ -1,7 +1,7 @@
 import * as DOM from "./dom"
-import { mutation, getElement, getElementById } from "./traversal"
+import { mutation, getElement, } from "./traversal"
 
-
+import { getElementById, getElementsByTagName } from "./finders"
 
 export function parsing(content: string): any {
 
@@ -37,14 +37,7 @@ export function parsing(content: string): any {
 
     // console.log(DOM.prettyPrinter(root))
 
-    // sample usage of a mutation
-    // mutation(root, (n) => {
-    //     return n.kind === DOM.NodeType.Element
-    // }, (n) => {
-    //     if (n.kind == DOM.NodeType.Element) {
-    //         n.tagName = "trick"
-    //     }
-    // })
+
 
     /**
      * Algorithm:
@@ -55,20 +48,16 @@ export function parsing(content: string): any {
 
     console.log(DOM.prettyPrinter(root))
 
-    // sample usage of getElement
-    // let el = getElement(root, (el) => {
-    //     if (el.kind === DOM.NodeType.Element) {
-    //         if (el.tagName == "FancyHeader") {
-    //             return true
-    //         }
-    //     }
-    //     return false
-    // })
+    console.time("findElements")
+    let elsByID
+    for (let i = 0; i < 1; i++) {
 
+        elsByID = getElementsByTagName(root, "plus-icon")
+    }
 
-    let elByID = getElementById(root, "a")
-    console.log(elByID)
+    console.timeEnd("findElements")
 
+    console.log("all:", elsByID)
 
 
 }

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const DOM = require("./dom");
-const traversal_1 = require("./traversal");
+const finders_1 = require("./finders");
 function parsing(content) {
     var hrstart = process.hrtime();
     let nodes;
@@ -31,14 +31,6 @@ function parsing(content) {
     // TODO: parent link
     // console.log(root === root.children[0].parent)
     // console.log(DOM.prettyPrinter(root))
-    // sample usage of a mutation
-    // mutation(root, (n) => {
-    //     return n.kind === DOM.NodeType.Element
-    // }, (n) => {
-    //     if (n.kind == DOM.NodeType.Element) {
-    //         n.tagName = "trick"
-    //     }
-    // })
     /**
      * Algorithm:
      * - perform a mutation on the root node:
@@ -46,17 +38,13 @@ function parsing(content) {
      *    - if so, link other shit in
      */
     console.log(DOM.prettyPrinter(root));
-    // sample usage of getElement
-    // let el = getElement(root, (el) => {
-    //     if (el.kind === DOM.NodeType.Element) {
-    //         if (el.tagName == "FancyHeader") {
-    //             return true
-    //         }
-    //     }
-    //     return false
-    // })
-    let elByID = traversal_1.getElementById(root, "a");
-    console.log(elByID);
+    console.time("findElements");
+    let elsByID;
+    for (let i = 0; i < 1; i++) {
+        elsByID = finders_1.getElementsByTagName(root, "plus-icon");
+    }
+    console.timeEnd("findElements");
+    console.log("all:", elsByID);
 }
 exports.parsing = parsing;
 const DomParser = require('dom-parser');
