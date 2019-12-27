@@ -19,7 +19,8 @@ function elem(tagName, attributes, children) {
         children,
         tagName,
         attributes,
-        tagStyle: TagStyle.Default
+        tagStyle: TagStyle.Default,
+        parent: null
     };
 }
 exports.elem = elem;
@@ -29,21 +30,26 @@ function selfClosing(tagName, attributes, children) {
         children,
         tagName,
         attributes,
-        tagStyle: TagStyle.SelfClosing
+        tagStyle: TagStyle.SelfClosing,
+        parent: null
     };
 }
 exports.selfClosing = selfClosing;
 function text(data) {
     return {
         kind: NodeType.Text,
-        data
+        children: [],
+        data,
+        parent: null
     };
 }
 exports.text = text;
 function comment(data) {
     return {
         kind: NodeType.Comment,
-        data
+        children: [],
+        data,
+        parent: null
     };
 }
 exports.comment = comment;

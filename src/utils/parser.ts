@@ -4,9 +4,21 @@
 class Parser {
     input: string
     index: number
+    line: number
+    col: number
     constructor(content) {
         this.input = content
         this.index = 0
+
+        this.line = 1
+        this.col = 0
+    }
+
+    error(): string {
+        let errorString = this.input.substring(this.index - 15, this.index)
+        errorString += "{" + this.input.charAt(this.index)
+        errorString += "}" + this.input.substring(this.index + 1, this.index + 15)
+        return `error on line ${this.line}: "${errorString}"`
     }
 
     // Return the next character without advancing.
@@ -19,6 +31,12 @@ class Parser {
         if (this.hasNext()) {
             let res = this.peek()
             this.index++
+            if (res == "\n") {
+                this.line++
+                this.col = 0
+            } else {
+                this.col++
+            }
             return res
         } else {
             console.error("too far")

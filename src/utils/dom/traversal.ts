@@ -21,9 +21,11 @@ function mutation(node: DOM.Node, condition: Condition, mutate: Mutation): void 
             mutation(child, condition, mutate)
         })
     }
-
 }
 
+/**
+ * Find a node in the tree
+ */
 
 
 export { mutation }

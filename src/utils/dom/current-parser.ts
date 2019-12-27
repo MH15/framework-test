@@ -8,7 +8,14 @@ export function parsing(content: string): any {
     var hrstart = process.hrtime()
     let nodes
     for (let i = 0; i < 100; i++) {
-        nodes = new HTMLParser(content).parseNodes()
+        let parser = new HTMLParser(content)
+        try {
+            nodes = parser.parseNodes(null)
+        } catch (error) {
+            console.log(parser.error())
+            console.log(error.stack)
+            process.exit()
+        }
     }
     let hrend = process.hrtime(hrstart)
     console.info('Execution time (hr): %ds %dms', hrend[0], hrend[1] / 1000000)
@@ -22,17 +29,22 @@ export function parsing(content: string): any {
         root = DOM.elem("html", new Map(), nodes)
     }
 
+    // console.log(root)
+    // console.log(root.children[0])
+    // TODO: parent link
+    // console.log(root === root.children[0].parent)
 
-    console.log(DOM.prettyPrinter(root))
+
+    // console.log(DOM.prettyPrinter(root))
 
     // sample usage of a mutation
-    mutation(root, (n) => {
-        return n.kind === DOM.NodeType.Element
-    }, (n) => {
-        if (n.kind == DOM.NodeType.Element) {
-            n.tagName = "trick"
-        }
-    })
+    // mutation(root, (n) => {
+    //     return n.kind === DOM.NodeType.Element
+    // }, (n) => {
+    //     if (n.kind == DOM.NodeType.Element) {
+    //         n.tagName = "trick"
+    //     }
+    // })
 
     /**
      * Algorithm:
@@ -60,6 +72,7 @@ const DomParser = require('dom-parser')
 const parser = new DomParser()
 import { HTMLParser } from "./html-parser"
 import { stringify } from "querystring"
+import { symlinkSync } from "fs"
 
 /**
  * TODO: Legacy

@@ -23,6 +23,7 @@ Working copy of a framework for building websites.
 - (done) self closing tags
 - void tags
 - "script nesting level"
+- possible implementation of a "parent" field in DOM.Node?
 
 
 

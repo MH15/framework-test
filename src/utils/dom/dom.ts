@@ -24,20 +24,24 @@ interface ElementData {
 
 type AttrMap = Map<string, string>
 
-
-
-interface Element {
-    kind: NodeType.Element,
+interface DOMElement {
+    kind: NodeType,
+    parent: DOMElement,
     children: Node[]
+}
+
+
+interface Element extends DOMElement {
+    kind: NodeType.Element,
     tagName: string,
     attributes: AttrMap
     tagStyle: TagStyle
 }
-interface Text {
+interface Text extends DOMElement {
     kind: NodeType.Text,
     data: string
 }
-interface Comment {
+interface Comment extends DOMElement {
     kind: NodeType.Comment,
     data: string
 }
@@ -52,7 +56,8 @@ function elem(tagName: string, attributes: AttrMap, children: Node[]): Node {
         children,
         tagName,
         attributes,
-        tagStyle: TagStyle.Default
+        tagStyle: TagStyle.Default,
+        parent: null
     }
 }
 
@@ -62,20 +67,25 @@ function selfClosing(tagName: string, attributes: AttrMap, children: Node[]): No
         children,
         tagName,
         attributes,
-        tagStyle: TagStyle.SelfClosing
+        tagStyle: TagStyle.SelfClosing,
+        parent: null
     }
 }
 
 function text(data: string): Node {
     return {
         kind: NodeType.Text,
-        data
+        children: [],
+        data,
+        parent: null
     }
 }
 function comment(data: string): Node {
     return {
         kind: NodeType.Comment,
-        data
+        children: [],
+        data,
+        parent: null
     }
 }
 

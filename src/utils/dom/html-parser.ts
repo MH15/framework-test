@@ -2,40 +2,63 @@ import * as DOM from "./dom"
 import * as assert from "assert"
 import { Parser } from "../parser"
 
+enum MODES {
+    DOM,
+    Style,
+    Script
+}
+
 export class HTMLParser extends Parser {
+    // current operating mode
+    // mode
 
     // Parse a sequence of sibling nodes.
-    parseNodes(): DOM.Node[] {
+    parseNodes(parent: DOM.Node): DOM.Node[] {
         let nodes = []
         while (true) {
             this.consumeWhitespace()
             if (!this.hasNext() || this.startsWith("</")) {
                 break
             }
-            nodes.push(this.parseNode())
+            nodes.push(this.parseNode(parent))
         }
         return nodes
     }
 
-    // Parse a tag or attribute name.
-    parseTagName(): string {
-        return this.consumeWhile(isAlphaNumeric)
-    }
-
     // Parse a single node.
-    parseNode(): DOM.Node {
+    parseNode(parent: DOM.Node): DOM.Node {
         let el: DOM.Node
         if (this.startsWith("<!--")) {
             el = this.parseComment()
         } else if (this.peek() === "<") {
-            let el = this.parseElement()
-            return el
+            el = this.parseElement()
         } else {
-            let text = this.parseText()
-            return text
+            el = this.parseText()
         }
+        el.parent = parent
         return el
     }
+    // Parse a tag or attribute name.
+    parseTagName(): string {
+        // return this.consumeWhile(isAlphaNumeric)
+        let regex = new RegExp(/[a-zA-Z0-9\-]/)
+        return this.consumeWhile((char) => {
+            return char.match(regex)
+        })
+    }
+
+    // Parse a tag or attribute name.
+    parseAttributeName(): string {
+        /* Additional (optional) characters can be: a 
+        letter, a digit, underscore, colon, period, 
+        dash, or a “CombiningChar” or “Extender” character, 
+        which I believe allows Unicode attributes names. */
+        let regex = new RegExp(/[a-zA-Z0-9\-:_@]/)
+        return this.consumeWhile((char) => {
+            return char.match(regex)
+        })
+    }
+
 
     // Parse a comment node.
     parseComment(): DOM.Node {
@@ -78,7 +101,11 @@ export class HTMLParser extends Parser {
             assert.equal(this.consume(), ">")
 
             // Contents
-            let children = this.parseNodes()
+            let el = DOM.elem(tagName, attributes, [])
+            let children = this.parseNodes(el)
+            if (el.kind == DOM.NodeType.Element) {
+                el.children = children
+            }
 
             // Closing tag
             assert.equal(this.consume(), "<")
@@ -86,7 +113,7 @@ export class HTMLParser extends Parser {
             assert.equal(this.parseTagName(), tagName)
             assert.equal(this.consume(), ">")
 
-            return DOM.elem(tagName, attributes, children)
+            return el
         } else if (this.startsWith("/>")) {
             // unbalanced tag shit
             assert.equal(this.consume(), "/")
@@ -100,10 +127,17 @@ export class HTMLParser extends Parser {
 
     // Parse a single name="value" pair.
     parseAttribute(): { key: string, value: string } {
-        let key = this.parseTagName()
-        assert.equal(this.consume(), "=")
-        let value = this.parseAttributeValue()
-        return { key, value }
+        this.consumeWhitespace()
+        let key = this.parseAttributeName()
+
+        // Support attributes with no values
+        if (this.peek() == "=") {
+            assert.equal(this.consume(), "=")
+            let value = this.parseAttributeValue()
+            return { key, value }
+        } else {
+            return { key: key, value: "true" }
+        }
     }
 
     // Parse a quoted value.

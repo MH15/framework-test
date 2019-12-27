@@ -1,12 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const DOM = require("./dom");
-const traversal_1 = require("./traversal");
 function parsing(content) {
     var hrstart = process.hrtime();
     let nodes;
-    for (let i = 0; i < 10000; i++) {
-        nodes = new html_parser_1.HTMLParser(content).parseNodes();
+    for (let i = 0; i < 100; i++) {
+        let parser = new html_parser_1.HTMLParser(content);
+        try {
+            nodes = parser.parseNodes(null);
+        }
+        catch (error) {
+            console.log(parser.error());
+            console.log(error.stack);
+            process.exit();
+        }
     }
     let hrend = process.hrtime(hrstart);
     console.info('Execution time (hr): %ds %dms', hrend[0], hrend[1] / 1000000);
@@ -18,15 +25,19 @@ function parsing(content) {
     else {
         root = DOM.elem("html", new Map(), nodes);
     }
-    console.log(DOM.prettyPrinter(root));
+    // console.log(root)
+    // console.log(root.children[0])
+    // TODO: parent link
+    // console.log(root === root.children[0].parent)
+    // console.log(DOM.prettyPrinter(root))
     // sample usage of a mutation
-    traversal_1.mutation(root, (n) => {
-        return n.kind === DOM.NodeType.Element;
-    }, (n) => {
-        if (n.kind == DOM.NodeType.Element) {
-            n.tagName = "trick";
-        }
-    });
+    // mutation(root, (n) => {
+    //     return n.kind === DOM.NodeType.Element
+    // }, (n) => {
+    //     if (n.kind == DOM.NodeType.Element) {
+    //         n.tagName = "trick"
+    //     }
+    // })
     /**
      * Algorithm:
      * - perform a mutation on the root node:
