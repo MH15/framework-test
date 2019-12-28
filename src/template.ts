@@ -1,6 +1,6 @@
 /**
  * Template uses the DOM module to search and replace items in the DOM.
- *
+ * 
  */
 import * as DOM from "./utils/dom/dom"
 
