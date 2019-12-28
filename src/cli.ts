@@ -5,7 +5,8 @@ import { readFileSync, writeFileSync } from "fs"
 import { buildWatch } from "./builder"
 import { LiveServer } from './server/live-server'
 import { newDir } from "./utils/file"
-import { parsing } from "./utils/dom/current-parser"
+import { parsing } from "./dom/current-parser"
+import { Framework } from "./app"
 const WebSocket = require("ws")
 
 const commander = require('commander')
@@ -97,32 +98,13 @@ program.command('develop <name>')
 program.command('parse <name>')
     .description('Parse a component using the new parser')
     .action(async (name) => {
-        const DIR_OUT = join(baseDir, 'dist')
-        const DIR_SEARCH = join(baseDir, 'components')
-        const DIR_ROOT = join(baseDir, "components", `${name}.component`)
-        const DEVELOP_ROOT = join(baseDir, "dist", "develop")
-
-        let file = readFileSync(join(DIR_SEARCH, name + ".component"), "utf8")
+        let framework = new Framework(baseDir)
+        const DIR_INCLUDE = join(baseDir, 'components')
+        let file = readFileSync(join(DIR_INCLUDE, name + ".component"), "utf8")
         // console.log(file)
         let root = parsing(file)
 
-        // TODO: combine LiveServer and WebSocketController into one class that extends Server
-        let liveServer = new LiveServer(DEVELOP_ROOT)
-        await liveServer.start(8081)
-
-        console.log("starting liveserver")
-
-        const wss = new WebSocket.Server({ port: 8089 })
-        let connection
-        wss.on('connection', (ws) => {
-            ws.on('message', message => {
-                console.log(`Received message => ${message}`)
-            })
-            ws.send('ho!')
-            connection = ws
-            buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT, connection)
-
-        })
+        framework.watch(name)
 
     })
 

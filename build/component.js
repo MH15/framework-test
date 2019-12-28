@@ -1,12 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = require("fs");
-const current_parser_1 = require("./utils/dom/current-parser");
+const current_parser_1 = require("./dom/current-parser");
 const path_1 = require("path");
 const file_1 = require("./utils/file");
 const sass = require('node-sass');
-const finders_1 = require("./utils/dom/finders");
+const finders_1 = require("./dom/finders");
 const nunjucks = require("nunjucks");
+const template_1 = require("./template");
 /**
  * A Single File Component.
  */
@@ -26,6 +27,19 @@ class Component {
         this.style = finders_1.getElementsByTagName(dom, "style")[0];
         this.script = finders_1.getElementsByTagName(dom, "script")[0];
     }
+    // Use the template methods to do this shit
+    assemble() {
+        console.log("assemble");
+        if (this.template.hasAttribute("include")) {
+            let includes = this.template.getAttribute("include");
+            console.log("included:", includes);
+            let referencedComponents = includes.split(",").map((item) => {
+                return item.trim().toLowerCase();
+            });
+            let buildSet = new Set(referencedComponents);
+            template_1.templateRender(this.template, buildSet);
+        }
+    }
     /**
      * Build template, style, and scripts to buildPath
      * @param buildPath the directory to build to
@@ -34,13 +48,13 @@ class Component {
         let result = "";
         this.buildSet = new Set();
         this.buildSet.add(this.name);
-        file_1.newDir(path_1.join(buildPath, "ejs"));
-        file_1.newDir(path_1.join(buildPath, "njk"));
+        // newDir(join(buildPath, "ejs"))
+        // newDir(join(buildPath, "njk"))
         file_1.newDir(path_1.join(buildPath, "style"));
         file_1.newDir(path_1.join(buildPath, "script"));
         // build mustache to dist/ejs folder
-        let mustachePath = path_1.join(buildPath, "njk", this.name + ".njk");
-        fs_1.writeFileSync(mustachePath, this.template.innerHTML);
+        // let mustachePath = join(buildPath, "njk", this.name + ".njk")
+        // writeFileSync(mustachePath, this.template.innerHTML)
         // build style to dist/style folder
         let stylePath = path_1.join(buildPath, "style", this.name + ".css");
         let css = compileStyles(this.style);
@@ -50,6 +64,7 @@ class Component {
         fs_1.writeFileSync(scriptPath, this.script.innerHTML);
         // build all referenced files as well
         let r = this.template.getAttribute("include");
+        console.log(`included in ${this.name}:`, r);
         if (r) {
             let referencedComponents = this.template.getAttribute("include").split(",");
             referencedComponents.forEach(name => {

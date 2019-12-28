@@ -1,5 +1,5 @@
 import { getElement, getAllElements } from "./traversal"
-import * as DOM from "./dom"
+import * as DOM from "./node"
 
 /**
  * Return all Elements with the matching tag name.

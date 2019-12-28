@@ -5,9 +5,12 @@ import { join } from "path";
 /**
  * Config
  */
-import { combine } from './builder';
+import { combine, buildWatch } from './builder';
 import { Component } from "./component";
 import { Server } from "./server/server";
+import { LiveServer } from './server/live-server';
+const WebSocket = require("ws")
+
 
 
 
@@ -16,6 +19,7 @@ class Framework {
     public appRoot: string
     public dirOut: string
     public dirSearch: string
+    public developPath: string
     // Server object
     private server: Server
     // Component cache
@@ -27,6 +31,7 @@ class Framework {
         this.appRoot = appRoot
         this.dirOut = join(this.appRoot, 'dist')
         this.dirSearch = join(this.appRoot, 'components')
+        this.developPath = join(this.appRoot, "dist", "develop")
         if (debug) {
             this.debug = true
         }
@@ -106,6 +111,25 @@ class Framework {
         let routes = require(join(this.appRoot, "config", "routes.json"))
         this.server = new Server(join(this.appRoot, "controllers"), routes)
         this.server.start(port)
+    }
+
+
+    async watch(name: string) {
+        let pathToComponent = join(this.dirSearch, `${name}.component`)
+        let liveServer = new LiveServer(this.developPath)
+        await liveServer.start(8081)
+
+        const wss = new WebSocket.Server({ port: 8089 })
+        let connection
+        wss.on('connection', (ws) => {
+            ws.on('message', message => {
+                console.log(`Received message => ${message}`)
+            })
+            ws.send('ho!')
+            connection = ws
+            buildWatch(this.dirOut, this.dirSearch, pathToComponent, connection)
+
+        })
     }
 }
 

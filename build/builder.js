@@ -38,24 +38,26 @@ exports.buildAll = buildAll;
  * Watch for changes in any of the component files. If the component that has
  * changed included by the component under build, build all included components.
  * @param dirOut the directory to save intermediate files to
- * @param dirInclude the directory to search for included components in
+ * @param dirSearch the directory to search for included components in
  * @param pathRoot the path to the component
  */
-function buildWatch(dirOut, dirInclude, pathRoot, wss) {
+function buildWatch(dirOut, dirSearch, pathRoot, wss) {
     let root = new component_1.Component(pathRoot);
-    let buildSetInitial = buildAll(root, dirOut, dirInclude);
-    chokidar.watch(dirInclude, {
+    let buildSetInitial = buildAll(root, dirOut, dirSearch);
+    chokidar.watch(dirSearch, {
         ignoreInitial: true
     }).on('all', (event, path) => {
         if (buildSetInitial.has(path_1.parse(path).name)) {
             console.log("Changes made. Building...");
             root.load(pathRoot);
-            buildSetInitial = buildAll(root, dirOut, dirInclude);
+            root.assemble();
+            // buildSetInitial = buildAll(root, dirOut, dirSearch)
         }
         wss.send('reload');
     });
 }
 exports.buildWatch = buildWatch;
+// this is for the route render function
 function combine(component, dirOut, dirSearch) {
     let includes = {};
     let joinedStyles = "";

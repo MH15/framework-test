@@ -76,7 +76,7 @@ export class LiveServer extends Server {
                 //     source: "temp.html"
                 // })
 
-                // let developHTML = 
+                // let developHTML = template.render(name, content)
                 // TODO: write a method to render the final component
                 let developHTML = ejs.render(fs.readFileSync(p, "utf8"), {
                     name: "test name",

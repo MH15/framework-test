@@ -1,4 +1,4 @@
-import * as DOM from "./dom"
+import * as DOM from "./node"
 import { getElementById, getElementsByTagName } from "./finders"
 
 

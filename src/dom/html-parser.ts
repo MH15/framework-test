@@ -1,6 +1,6 @@
-import * as DOM from "./dom"
+import * as DOM from "./node"
 import * as assert from "assert"
-import { Parser } from "../parser"
+import { Parser } from "../utils/parser"
 
 enum MODES {
     DOM,

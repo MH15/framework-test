@@ -10,6 +10,15 @@ class LiveServer extends server_1.Server {
     constructor(developPath) {
         super("", {});
         this.developPath = developPath;
+        this.sampleData = {};
+    }
+    /**
+     * Change the data that is given to the current template
+     * @param data: the object to be rendered with the current component
+     */
+    changeSampleData(data) {
+        this.sampleData = data;
+        // TODO: reload server to use this new data
     }
     start(port) {
         return new Promise((resolve, reject) => {
@@ -48,7 +57,8 @@ class LiveServer extends server_1.Server {
                 //     type: "componentz",
                 //     source: "temp.html"
                 // })
-                // let developHTML = 
+                // let developHTML = template.render(name, content)
+                // TODO: write a method to render the final component
                 let developHTML = ejs.render(fs.readFileSync(p, "utf8"), {
                     name: "test name",
                     type: "component",

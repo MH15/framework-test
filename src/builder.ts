@@ -12,7 +12,6 @@ const nunjucks = require("nunjucks")
 
 const ejs = require("ejs")
 import * as chokidar from "chokidar"
-import { WebSocketController } from './server/live-server'
 
 
 export function buildAll(component: Component, dirOut: string, dirInclude: string): Set<string> {
@@ -46,26 +45,28 @@ export function buildAll(component: Component, dirOut: string, dirInclude: strin
  * Watch for changes in any of the component files. If the component that has
  * changed included by the component under build, build all included components.
  * @param dirOut the directory to save intermediate files to
- * @param dirInclude the directory to search for included components in 
+ * @param dirSearch the directory to search for included components in 
  * @param pathRoot the path to the component
  */
-export function buildWatch(dirOut: string, dirInclude: string, pathRoot: string, wss: WebSocket) {
+export function buildWatch(dirOut: string, dirSearch: string, pathRoot: string, wss: WebSocket) {
     let root = new Component(pathRoot)
 
-    let buildSetInitial = buildAll(root, dirOut, dirInclude)
+    let buildSetInitial = buildAll(root, dirOut, dirSearch)
 
-    chokidar.watch(dirInclude, {
+    chokidar.watch(dirSearch, {
         ignoreInitial: true
     }).on('all', (event, path) => {
         if (buildSetInitial.has(parse(path).name)) {
             console.log("Changes made. Building...")
             root.load(pathRoot)
-            buildSetInitial = buildAll(root, dirOut, dirInclude)
+            root.assemble()
+            // buildSetInitial = buildAll(root, dirOut, dirSearch)
         }
         wss.send('reload')
     })
 }
 
+// this is for the route render function
 export function combine(component: Component, dirOut: string, dirSearch: string): string {
     let includes = {}
     let joinedStyles = ""

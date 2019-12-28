@@ -40,6 +40,14 @@ class Node {
         this.tagStyle = null
     }
 
+    get tagName() {
+        if (this.kind == NodeType.Element) {
+            return this.data
+        } else {
+            return ""
+        }
+    }
+
     get innerHTML() {
         // TODO: implementation based on the data property
         let children = ""
