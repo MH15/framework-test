@@ -5,6 +5,7 @@
 import * as DOM from "./dom/node"
 import { mutation } from "./dom/traversal"
 import { Component } from "./component"
+import { join } from "path"
 
 /**
 pseudocode:
@@ -31,7 +32,8 @@ class Template {
 
 }
 
-export function templateRender(dom: DOM.Node, buildSet: Set<string>) {
+export function templateRender(c: Component, buildSet: Set<string>, dirSearch: string) {
+    let dom = c.template
     mutation(dom, (n) => {
         if (n.kind === DOM.NodeType.Element) {
             let tag = n.tagName.toLowerCase()
@@ -41,12 +43,16 @@ export function templateRender(dom: DOM.Node, buildSet: Set<string>) {
             }
         }
         return false
-    }, modify)
+    }, (n) => {
+        modify(n, c, dirSearch)
+    })
 }
 
 
-function modify(n: DOM.Node) {
+export function modify(n: DOM.Node, c: Component, dirSearch: string) {
     console.log("modding", n.tagName)
+    let component = new Component(join(dirSearch, `${n.tagName}.component`))
+    console.log(component)
 
 
     let referencedComponent = null // find the component to add
@@ -54,3 +60,5 @@ function modify(n: DOM.Node) {
 
     // insert referenced component in tree
 }
+
+// export function condition()

@@ -99,7 +99,7 @@ class Framework {
         this.server = new server_1.Server(path_1.join(this.appRoot, "controllers"), routes);
         this.server.start(port);
     }
-    watch(name) {
+    watch(name, data) {
         return __awaiter(this, void 0, void 0, function* () {
             let pathToComponent = path_1.join(this.dirSearch, `${name}.component`);
             let liveServer = new live_server_1.LiveServer(this.developPath);
@@ -112,7 +112,7 @@ class Framework {
                 });
                 ws.send('ho!');
                 connection = ws;
-                builder_1.buildWatch(this.dirOut, this.dirSearch, pathToComponent, connection);
+                builder_1.buildWatch(data, this.dirOut, this.dirSearch, pathToComponent, connection);
             });
         });
     }

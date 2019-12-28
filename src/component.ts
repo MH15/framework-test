@@ -8,10 +8,12 @@ const sass = require('node-sass')
 
 import { getElementsByTagName } from "./dom/finders"
 
-const nunjucks = require("nunjucks")
 
 import * as DOM from "./dom/node"
 import { templateRender } from './template';
+import { mutation } from "./dom/traversal"
+import { modify } from "./template"
+
 
 interface ComponentElement {
     dom: DOM.Node,
@@ -30,6 +32,8 @@ class Component {
     public style: DOM.Node
     public script: DOM.Node
     public buildSet: Set<string>
+    data: object
+
 
     /**
      * Create a new component instance from filepath.
@@ -51,18 +55,48 @@ class Component {
     }
 
     // Use the template methods to do this shit
-    public assemble() {
+    public assemble(data: object, dirSearch: string) {
+        this.data = data
         console.log("assemble")
         let buildSet = new Set<string>()
+        buildSet.add(this.name)
+        let built = new Set<Component>()
         if (this.template.hasAttribute("include")) {
             let includes = this.template.getAttribute("include")
             console.log("included:", includes)
             let referencedComponents = includes.split(",").map(item => {
+                // TODO: this doesn't seem to work
                 return item.trim().toLowerCase()
             })
-            referencedComponents.forEach(item => buildSet.add(item))
+            referencedComponents.forEach(name => {
+                let refPath = join(dirSearch, name + ".component")
+                let c = new Component(refPath)
+                c.assemble(data, dirSearch)
+                built.add(c)
+
+                buildSet.add(name)
+                // this.cache.add
+            })
         }
-        templateRender(this.template, buildSet)
+        console.log("built:", built)
+        mutation(this.template, (n) => {
+            if (n.kind === DOM.NodeType.Element) {
+                let tag = n.tagName.toLowerCase()
+                // console.log("tag:", tag)
+                if (buildSet.has(tag)) {
+                    return true
+                }
+            }
+            return false
+        }, (n) => {
+            console.log("modding", n)
+            let componentToInsert = findComponent(built, n.tagName)
+            console.log("found:", componentToInsert)
+            n.children[0] = componentToInsert.template
+            console.log("modded", n)
+        })
+
+        return buildSet
 
     }
 
@@ -115,6 +149,17 @@ class Component {
     }
 }
 
+
+function findComponent(built: Set<Component>, name: string): Component | null {
+    let result = null
+    for (let c of built) {
+        if (c.name.toLowerCase() == name.toLowerCase()) {
+            result = c
+            break
+        }
+    }
+    return result
+}
 
 
 /**

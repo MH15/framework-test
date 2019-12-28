@@ -88,7 +88,7 @@ program.command('develop <name>')
             })
             ws.send('ho!')
             connection = ws
-            buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT, connection)
+            buildWatch({}, DIR_OUT, DIR_SEARCH, DIR_ROOT, connection)
 
         })
 
@@ -104,7 +104,11 @@ program.command('parse <name>')
         // console.log(file)
         let root = parsing(file)
 
-        framework.watch(name)
+        let data = {
+            test: "frank"
+        }
+
+        framework.watch(name, data)
 
     })
 

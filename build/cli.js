@@ -85,7 +85,7 @@ program.command('develop <name>')
         });
         ws.send('ho!');
         connection = ws;
-        builder_1.buildWatch(DIR_OUT, DIR_SEARCH, DIR_ROOT, connection);
+        builder_1.buildWatch({}, DIR_OUT, DIR_SEARCH, DIR_ROOT, connection);
     });
 }));
 program.command('parse <name>')
@@ -96,7 +96,10 @@ program.command('parse <name>')
     let file = fs_1.readFileSync(path_1.join(DIR_INCLUDE, name + ".component"), "utf8");
     // console.log(file)
     let root = current_parser_1.parsing(file);
-    framework.watch(name);
+    let data = {
+        test: "frank"
+    };
+    framework.watch(name, data);
 }));
 program.parse(process.argv);
 //# sourceMappingURL=cli.js.map

@@ -6,8 +6,8 @@ const path_1 = require("path");
 const file_1 = require("./utils/file");
 const sass = require('node-sass');
 const finders_1 = require("./dom/finders");
-const nunjucks = require("nunjucks");
-const template_1 = require("./template");
+const DOM = require("./dom/node");
+const traversal_1 = require("./dom/traversal");
 /**
  * A Single File Component.
  */
@@ -28,17 +28,46 @@ class Component {
         this.script = finders_1.getElementsByTagName(dom, "script")[0];
     }
     // Use the template methods to do this shit
-    assemble() {
+    assemble(data, dirSearch) {
+        this.data = data;
         console.log("assemble");
+        let buildSet = new Set();
+        buildSet.add(this.name);
+        let built = new Set();
         if (this.template.hasAttribute("include")) {
             let includes = this.template.getAttribute("include");
             console.log("included:", includes);
-            let referencedComponents = includes.split(",").map((item) => {
+            let referencedComponents = includes.split(",").map(item => {
+                // TODO: this doesn't seem to work
                 return item.trim().toLowerCase();
             });
-            let buildSet = new Set(referencedComponents);
-            template_1.templateRender(this.template, buildSet);
+            referencedComponents.forEach(name => {
+                let refPath = path_1.join(dirSearch, name + ".component");
+                let c = new Component(refPath);
+                c.assemble(data, dirSearch);
+                built.add(c);
+                buildSet.add(name);
+                // this.cache.add
+            });
         }
+        console.log("built:", built);
+        traversal_1.mutation(this.template, (n) => {
+            if (n.kind === DOM.NodeType.Element) {
+                let tag = n.tagName.toLowerCase();
+                // console.log("tag:", tag)
+                if (buildSet.has(tag)) {
+                    return true;
+                }
+            }
+            return false;
+        }, (n) => {
+            console.log("modding", n);
+            let componentToInsert = findComponent(built, n.tagName);
+            console.log("found:", componentToInsert);
+            n.children[0] = componentToInsert.template;
+            console.log("modded", n);
+        });
+        return buildSet;
     }
     /**
      * Build template, style, and scripts to buildPath
@@ -83,6 +112,16 @@ class Component {
     }
 }
 exports.Component = Component;
+function findComponent(built, name) {
+    let result = null;
+    for (let c of built) {
+        if (c.name.toLowerCase() == name.toLowerCase()) {
+            result = c;
+            break;
+        }
+    }
+    return result;
+}
 /**
 * Compile styles using the correct preprocessor.
 * @param {Node} style the DOM Node

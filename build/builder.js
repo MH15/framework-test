@@ -41,17 +41,19 @@ exports.buildAll = buildAll;
  * @param dirSearch the directory to search for included components in
  * @param pathRoot the path to the component
  */
-function buildWatch(dirOut, dirSearch, pathRoot, wss) {
+function buildWatch(data, dirOut, dirSearch, pathRoot, wss) {
     let root = new component_1.Component(pathRoot);
-    let buildSetInitial = buildAll(root, dirOut, dirSearch);
+    let buildSetInitial = root.assemble(data, dirSearch);
+    console.log("buildSet", buildSetInitial);
     chokidar.watch(dirSearch, {
         ignoreInitial: true
     }).on('all', (event, path) => {
-        if (buildSetInitial.has(path_1.parse(path).name)) {
+        if (buildSetInitial.has(path_1.parse(path).name.toLowerCase())) {
             console.log("Changes made. Building...");
             root.load(pathRoot);
-            root.assemble();
+            root.assemble(data, dirSearch);
             // buildSetInitial = buildAll(root, dirOut, dirSearch)
+            console.log(root.template.print());
         }
         wss.send('reload');
     });

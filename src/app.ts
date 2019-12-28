@@ -114,7 +114,7 @@ class Framework {
     }
 
 
-    async watch(name: string) {
+    async watch(name: string, data: object) {
         let pathToComponent = join(this.dirSearch, `${name}.component`)
         let liveServer = new LiveServer(this.developPath)
         await liveServer.start(8081)
@@ -127,7 +127,7 @@ class Framework {
             })
             ws.send('ho!')
             connection = ws
-            buildWatch(this.dirOut, this.dirSearch, pathToComponent, connection)
+            buildWatch(data, this.dirOut, this.dirSearch, pathToComponent, connection)
 
         })
     }
