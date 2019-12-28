@@ -48,6 +48,7 @@ class LiveServer extends server_1.Server {
                 //     type: "componentz",
                 //     source: "temp.html"
                 // })
+                // let developHTML = 
                 let developHTML = ejs.render(fs.readFileSync(p, "utf8"), {
                     name: "test name",
                     type: "component",

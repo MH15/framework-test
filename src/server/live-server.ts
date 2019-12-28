@@ -16,9 +16,21 @@ const ejs = require("ejs")
 export class LiveServer extends Server {
     private developPath: string
     private socket: any
+    private sampleData: object
+
     constructor(developPath: string) {
         super("", {})
         this.developPath = developPath
+        this.sampleData = {}
+    }
+
+    /**
+     * Change the data that is given to the current template
+     * @param data: the object to be rendered with the current component
+     */
+    changeSampleData(data: object) {
+        this.sampleData = data
+        // TODO: reload server to use this new data
     }
 
     start(port: number) {
@@ -65,6 +77,7 @@ export class LiveServer extends Server {
                 // })
 
                 // let developHTML = 
+                // TODO: write a method to render the final component
                 let developHTML = ejs.render(fs.readFileSync(p, "utf8"), {
                     name: "test name",
                     type: "component",
@@ -73,6 +86,7 @@ export class LiveServer extends Server {
                 // console.log("DEV", developHTML)
 
                 res.setHeader('Content-type', mimeType[".html"] || 'text/plain')
+
                 res.end(developHTML)
             } else {
                 // read file from file system
