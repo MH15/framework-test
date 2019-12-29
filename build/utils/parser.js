@@ -66,7 +66,7 @@ class Parser {
     }
     // Consume whitespace.
     consumeWhitespace() {
-        this.consumeWhile((char) => {
+        return this.consumeWhile((char) => {
             return ' \t\n\r\v'.indexOf(char) >= 0;
         });
     }

@@ -8,6 +8,8 @@ const DOM = require("./dom/node");
 const traversal_1 = require("./dom/traversal");
 const component_1 = require("./component");
 const path_1 = require("path");
+const parser_1 = require("./utils/parser");
+const assert = require("assert");
 /**
 pseudocode:
 
@@ -54,4 +56,54 @@ function modify(n, c, dirSearch) {
 }
 exports.modify = modify;
 // export function condition()
+class TemplateParser extends parser_1.Parser {
+    constructor(content, separators) {
+        super(content);
+        this.sepLeft = "{{";
+        this.sepRight = "}}";
+        this.openBraces = 0;
+        this.newString = "";
+        if (separators) {
+            this.sepLeft = separators[0];
+            this.sepRight = separators[1];
+        }
+    }
+    advance() {
+        while (this.hasNext()) {
+            this.newString += this.consumeWhitespace();
+            if (this.startsWith("{{")) {
+                this.parseReplacement();
+            }
+            else {
+                this.newString += this.consume();
+            }
+        }
+        return this.newString;
+    }
+    parseReplacement() {
+        console.log("parse replacement", 0);
+        assert.equal(this.consume(), "{");
+        assert.equal(this.consume(), "{");
+        this.newString += this.consumeWhitespace();
+        console.log("parse replacement", 1);
+        // get data, filter maybe?
+        let key = this.parseKey();
+        this.newString += key;
+        console.log("parse replacement", 2);
+        this.newString += this.consumeWhitespace();
+        assert.equal(this.consume(), "}");
+        assert.equal(this.consume(), "}");
+    }
+    parseKey() {
+        /* Additional (optional) characters can be: a
+        letter, a digit, underscore, colon, period,
+        dash, or a “CombiningChar” or “Extender” character,
+        which I believe allows Unicode attributes names. */
+        let regex = new RegExp(/[a-zA-Z0-9\-:_@]/);
+        return this.consumeWhile((char) => {
+            return char.match(regex);
+        });
+    }
+}
+exports.TemplateParser = TemplateParser;
 //# sourceMappingURL=template.js.map

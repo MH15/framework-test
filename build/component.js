@@ -7,6 +7,7 @@ const file_1 = require("./utils/file");
 const sass = require('node-sass');
 const finders_1 = require("./dom/finders");
 const DOM = require("./dom/node");
+const template_1 = require("./template");
 const traversal_1 = require("./dom/traversal");
 /**
  * A Single File Component.
@@ -20,9 +21,9 @@ class Component {
         this.load(filepath);
     }
     load(filepath) {
-        this.file = fs_1.readFileSync(filepath, "utf8");
+        let file = fs_1.readFileSync(filepath, "utf8");
         this.name = path_1.parse(filepath).name;
-        let dom = current_parser_1.parseHTML(this.file);
+        let dom = current_parser_1.parseHTML(file);
         this.template = finders_1.getElementsByTagName(dom, "template")[0];
         this.style = finders_1.getElementsByTagName(dom, "style")[0];
         this.script = finders_1.getElementsByTagName(dom, "script")[0];
@@ -36,7 +37,6 @@ class Component {
         let built = new Set();
         if (this.template.hasAttribute("include")) {
             let includes = this.template.getAttribute("include");
-            console.log("included:", includes);
             let referencedComponents = includes.split(",").map(item => {
                 // TODO: this doesn't seem to work
                 return item.trim().toLowerCase();
@@ -50,7 +50,6 @@ class Component {
                 // this.cache.add
             });
         }
-        console.log("built:", built);
         traversal_1.mutation(this.template, (n) => {
             if (n.kind === DOM.NodeType.Element) {
                 let tag = n.tagName.toLowerCase();
@@ -61,11 +60,23 @@ class Component {
             }
             return false;
         }, (n) => {
-            console.log("modding", n);
             let componentToInsert = findComponent(built, n.tagName);
-            console.log("found:", componentToInsert);
-            n.children[0] = componentToInsert.template;
-            console.log("modded", n);
+            for (let child of componentToInsert.template.children) {
+                n.appendChild(child);
+            }
+        }, (n) => {
+            if (n.isElement) {
+                // TODO: handle templating on elements
+            }
+            if (n.isText) {
+                // TODO: handle templating on text        
+                let template = new template_1.TemplateParser(n.data);
+                n.data = template.advance();
+            }
+            if (n.isComment) {
+                // TODO: do we need templating on comments?
+            }
+            console.log("here we template!", n.tagName, ":", n.data, ":");
         });
         return buildSet;
     }

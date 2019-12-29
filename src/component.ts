@@ -10,8 +10,8 @@ import { getElementsByTagName } from "./dom/finders"
 
 
 import * as DOM from "./dom/node"
-import { templateRender } from './template';
-import { mutation } from "./dom/traversal"
+import { templateRender, TemplateParser } from './template';
+import { mutation, multiMutation } from "./dom/traversal"
 import { modify } from "./template"
 
 
@@ -27,12 +27,12 @@ interface ComponentElement {
  */
 class Component {
     public name: string
-    private file: string
     public template: DOM.Node
     public style: DOM.Node
     public script: DOM.Node
     public buildSet: Set<string>
     data: object
+
 
 
     /**
@@ -44,9 +44,9 @@ class Component {
     }
 
     public load(filepath: string): void {
-        this.file = readFileSync(filepath, "utf8")
+        let file = readFileSync(filepath, "utf8")
         this.name = parse(filepath).name
-        let dom = parseHTML(this.file)
+        let dom = parseHTML(file)
 
         this.template = getElementsByTagName(dom, "template")[0]
         this.style = getElementsByTagName(dom, "style")[0]
@@ -63,7 +63,6 @@ class Component {
         let built = new Set<Component>()
         if (this.template.hasAttribute("include")) {
             let includes = this.template.getAttribute("include")
-            console.log("included:", includes)
             let referencedComponents = includes.split(",").map(item => {
                 // TODO: this doesn't seem to work
                 return item.trim().toLowerCase()
@@ -78,7 +77,7 @@ class Component {
                 // this.cache.add
             })
         }
-        console.log("built:", built)
+
         mutation(this.template, (n) => {
             if (n.kind === DOM.NodeType.Element) {
                 let tag = n.tagName.toLowerCase()
@@ -89,11 +88,24 @@ class Component {
             }
             return false
         }, (n) => {
-            console.log("modding", n)
             let componentToInsert = findComponent(built, n.tagName)
-            console.log("found:", componentToInsert)
-            n.children[0] = componentToInsert.template
-            console.log("modded", n)
+            for (let child of componentToInsert.template.children) {
+                n.appendChild(child)
+            }
+        }, (n) => {
+            if (n.isElement) {
+                // TODO: handle templating on elements
+            }
+            if (n.isText) {
+                // TODO: handle templating on text        
+                let template = new TemplateParser(n.data)
+                n.data = template.advance()
+
+            }
+            if (n.isComment) {
+                // TODO: do we need templating on comments?
+            }
+            console.log("here we template!", n.tagName, ":", n.data, ":")
         })
 
         return buildSet

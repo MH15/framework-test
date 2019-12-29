@@ -16,22 +16,77 @@ type Mutation = (n: DOM.Node) => any
 //     }
 // })
 
+new Map<Condition, Mutation>()
+
+function mutation(root: DOM.Node, condition: Condition, mutate: Mutation): void;
+function mutation(root: DOM.Node, condition: Condition, mutateIf: Mutation, mutateElse: Mutation): void;
+
 /**
  * Mutate all nodes in a DOM.Node tree that meet a condition.
  * @param root: the DOM.Node object to begin the mutation on
  * @param condition: if condition returns true, mutate the current DOM.Node object
  * @param mutate: the function that is called on the DOM.Node object
  */
-function mutation(root: DOM.Node, condition: Condition, mutate: Mutation): void {
+function mutation(root: DOM.Node, condition: Condition, mutateIf: Mutation, mutateElse?: Condition): void {
     if (condition(root) === true) {
-        mutate(root)
+        mutateIf(root)
+    } else if (mutateElse) {
+        mutateElse(root)
     }
     if (root.kind === DOM.NodeType.Element) {
         root.children.forEach(child => {
-            mutation(child, condition, mutate)
+            if (mutateElse) {
+                mutation(child, condition, mutateIf, mutateElse)
+            } else {
+                mutation(child, condition, mutateIf)
+            }
         })
     }
 }
+
+/**
+ * Like a switch-case but for Mutations
+ * @param root: the DOM.Node object to begin the mutation on
+ * @param methods: a Map of Conditon-Mutation pairs to apply to the Node
+ */
+export function multiMutation(root: DOM.Node, methods: Map<Condition, Mutation>): void {
+    for (let condition of methods.keys()) {
+        if (condition(root) === true) {
+            let mutation = methods.get(condition)
+            mutation(root)
+        }
+    }
+    if (root.kind === DOM.NodeType.Element) {
+        root.children.forEach(child => {
+            multiMutation(child, methods)
+        })
+    }
+}
+
+/*
+Example of multiMutation:
+    multiMutation(this.template, new Map([
+        [(n: DOM.Node): boolean => {
+            if (n.kind === DOM.NodeType.Element) {
+                let tag = n.tagName.toLowerCase()
+                // console.log("tag:", tag)
+                if (buildSet.has(tag)) {
+                    return true
+                }
+            }
+            return false
+        }, (n: DOM.Node): void => {
+            console.log("modding", n)
+            let componentToInsert = findComponent(built, n.tagName)
+            console.log("found:", componentToInsert)
+            for (let child of componentToInsert.template.children) {
+                n.appendChild(child)
+            }
+            console.log("modded", n)
+        }]
+
+    ]))
+*/
 
 
 // sample usage of getElement

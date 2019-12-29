@@ -14,12 +14,26 @@ var TagStyle;
     TagStyle[TagStyle["SelfClosing"] = 1] = "SelfClosing";
     TagStyle[TagStyle["Void"] = 2] = "Void";
 })(TagStyle || (TagStyle = {}));
-class Node {
+class Primitive {
     constructor(kind) {
         this.kind = kind;
         this.parent = null;
         this.children = [];
         this.data = "";
+    }
+    get isElement() {
+        return this.kind === NodeType.Element;
+    }
+    get isComment() {
+        return this.kind === NodeType.Comment;
+    }
+    get isText() {
+        return this.kind === NodeType.Text;
+    }
+}
+class Node extends Primitive {
+    constructor(kind) {
+        super(kind);
         this.attributes = new Map();
         this.tagStyle = null;
     }
@@ -29,6 +43,11 @@ class Node {
         }
         else {
             return "";
+        }
+    }
+    appendChild(child) {
+        if (this.kind === NodeType.Element) {
+            this.children.push(child);
         }
     }
     get innerHTML() {

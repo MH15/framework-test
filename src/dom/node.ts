@@ -20,22 +20,41 @@ interface ElementData {
 
 type AttrMap = Map<string, string>
 
-
-
-class Node {
-    // kind: NodeType
+class Primitive {
     kind: NodeType
     parent: Node
     children: Node[]
     data: string // for tagName and innerHTML
-    attributes?: AttrMap
-    tagStyle?: TagStyle
 
     constructor(kind: NodeType) {
         this.kind = kind
         this.parent = null
         this.children = []
         this.data = ""
+    }
+
+    get isElement() {
+        return this.kind === NodeType.Element
+    }
+
+    get isComment() {
+        return this.kind === NodeType.Comment
+    }
+
+    get isText() {
+        return this.kind === NodeType.Text
+    }
+
+}
+
+
+
+class Node extends Primitive {
+    attributes?: AttrMap
+    tagStyle?: TagStyle
+
+    constructor(kind: NodeType) {
+        super(kind)
         this.attributes = new Map()
         this.tagStyle = null
     }
@@ -45,6 +64,12 @@ class Node {
             return this.data
         } else {
             return ""
+        }
+    }
+
+    appendChild(child: Node) {
+        if (this.kind === NodeType.Element) {
+            this.children.push(child)
         }
     }
 
@@ -75,7 +100,6 @@ class Node {
         }
         return false
     }
-
 
     print(): string {
         return prettyPrinter(this, 0)
