@@ -97,7 +97,10 @@ program.command('parse <name>')
     // console.log(file)
     let root = current_parser_1.parsing(file);
     let data = {
-        test: "frank"
+        test: "frank",
+        ha: {
+            alpha: "h.alphaaa"
+        }
     };
     framework.watch(name, data);
 }));

@@ -1,13 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Template uses the DOM module to search and replace items in the DOM.
- *
- */
-const DOM = require("./dom/node");
-const traversal_1 = require("./dom/traversal");
-const component_1 = require("./component");
-const path_1 = require("path");
 const parser_1 = require("./utils/parser");
 const assert = require("assert");
 /**
@@ -26,36 +18,10 @@ function combine(node) {
     2. do the style and script combine using string methods
 
 }
-
 */
-class Template {
-}
-function templateRender(c, buildSet, dirSearch) {
-    let dom = c.template;
-    traversal_1.mutation(dom, (n) => {
-        if (n.kind === DOM.NodeType.Element) {
-            let tag = n.tagName.toLowerCase();
-            console.log("tag:", tag);
-            if (buildSet.has(tag)) {
-                return true;
-            }
-        }
-        return false;
-    }, (n) => {
-        modify(n, c, dirSearch);
-    });
-}
-exports.templateRender = templateRender;
-function modify(n, c, dirSearch) {
-    console.log("modding", n.tagName);
-    let component = new component_1.Component(path_1.join(dirSearch, `${n.tagName}.component`));
-    console.log(component);
-    let referencedComponent = null; // find the component to add
-    // referencedComponent.assemble() // perform assembly on referenced component
-    // insert referenced component in tree
-}
-exports.modify = modify;
-// export function condition()
+let ERROR = {
+    KEY_NOT_FOUND: (key) => { return `Error: key "${key} not found.`; }
+};
 class TemplateParser extends parser_1.Parser {
     constructor(content, separators) {
         super(content);
@@ -67,6 +33,13 @@ class TemplateParser extends parser_1.Parser {
             this.sepLeft = separators[0];
             this.sepRight = separators[1];
         }
+    }
+    load(content, data) {
+        this.input = content;
+        this.index = 0;
+        this.line = 1;
+        this.col = 0;
+        this.data = data;
     }
     advance() {
         while (this.hasNext()) {
@@ -81,16 +54,26 @@ class TemplateParser extends parser_1.Parser {
         return this.newString;
     }
     parseReplacement() {
-        console.log("parse replacement", 0);
         assert.equal(this.consume(), "{");
         assert.equal(this.consume(), "{");
-        this.newString += this.consumeWhitespace();
-        console.log("parse replacement", 1);
+        // whitespace inside tags is not retained
+        this.consumeWhitespace();
         // get data, filter maybe?
         let key = this.parseKey();
-        this.newString += key;
-        console.log("parse replacement", 2);
-        this.newString += this.consumeWhitespace();
+        // TODO: find data
+        let val = getProp(this.data, key);
+        console.log("typeof val:", typeof val);
+        if (typeof val !== undefined) {
+            this.newString += val;
+        }
+        else {
+            throw ERROR.KEY_NOT_FOUND(key);
+        }
+        if (typeof val == undefined) {
+            console.error(ERROR.KEY_NOT_FOUND(key));
+            throw ERROR.KEY_NOT_FOUND(key);
+        }
+        this.consumeWhitespace();
         assert.equal(this.consume(), "}");
         assert.equal(this.consume(), "}");
     }
@@ -99,11 +82,27 @@ class TemplateParser extends parser_1.Parser {
         letter, a digit, underscore, colon, period,
         dash, or a “CombiningChar” or “Extender” character,
         which I believe allows Unicode attributes names. */
-        let regex = new RegExp(/[a-zA-Z0-9\-:_@]/);
+        let regex = new RegExp(/[a-zA-Z0-9\-:_@.]/);
         return this.consumeWhile((char) => {
             return char.match(regex);
         });
     }
 }
 exports.TemplateParser = TemplateParser;
+/** Get a nested property from an object without returning any errors.
+ * If the property or property chain doesn't exist, undefined is returned.
+ * Property names with spaces may use either dot or bracket "[]" notation.
+ * Note that bracketed property names without surrounding quotes will fail the lookup.
+ *      e.g. embedded variables are not supported.
+ * @param {object} obj The object to check
+ * @param {string} prop The property or property chain to get (e.g. obj.prop1.prop1a or obj['prop1'].prop2)
+ * @returns {*|undefined} The value of the objects property or undefined if the property doesn't exist
+ */
+function getProp(obj, prop) {
+    // Replace [] notation with dot notation
+    prop = prop.replace(/\[["'`](.*)["'`]\]/g, ".$1");
+    return prop.split('.').reduce(function (prev, curr) {
+        return prev ? prev[curr] : undefined;
+    }, obj || self);
+} // --- end of fn getProp() --- //
 //# sourceMappingURL=template.js.map

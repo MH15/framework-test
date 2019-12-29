@@ -39,7 +39,7 @@ class Parser {
             }
             return res
         } else {
-            console.error("too far")
+            // console.error("too far")
         }
     }
 

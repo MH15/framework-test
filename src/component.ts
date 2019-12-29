@@ -10,9 +10,8 @@ import { getElementsByTagName } from "./dom/finders"
 
 
 import * as DOM from "./dom/node"
-import { templateRender, TemplateParser } from './template';
+import { TemplateParser } from './template';
 import { mutation, multiMutation } from "./dom/traversal"
-import { modify } from "./template"
 
 
 interface ComponentElement {
@@ -78,6 +77,7 @@ class Component {
             })
         }
 
+        let template = new TemplateParser("")
         mutation(this.template, (n) => {
             if (n.kind === DOM.NodeType.Element) {
                 let tag = n.tagName.toLowerCase()
@@ -87,25 +87,25 @@ class Component {
                 }
             }
             return false
-        }, (n) => {
+        }, (n) => { // IF
             let componentToInsert = findComponent(built, n.tagName)
             for (let child of componentToInsert.template.children) {
                 n.appendChild(child)
             }
-        }, (n) => {
+        }, (n) => { // ELSE
             if (n.isElement) {
                 // TODO: handle templating on elements
             }
             if (n.isText) {
                 // TODO: handle templating on text        
-                let template = new TemplateParser(n.data)
+                template.load(n.data, data)
                 n.data = template.advance()
 
             }
             if (n.isComment) {
                 // TODO: do we need templating on comments?
             }
-            console.log("here we template!", n.tagName, ":", n.data, ":")
+            // console.log("here we template!", n.tagName, ":", n.data, ":")
         })
 
         return buildSet

@@ -35,7 +35,7 @@ class Parser {
             return res;
         }
         else {
-            console.error("too far");
+            // console.error("too far")
         }
     }
     // Does the parser have more characters to consume?

@@ -8,6 +8,7 @@ import { Component } from "./component"
 import { join, sep } from "path"
 import { Parser } from "./utils/parser"
 import * as assert from "assert"
+import { type } from "os"
 
 /**
 pseudocode:
@@ -25,46 +26,11 @@ function combine(node) {
     2. do the style and script combine using string methods
 
 }
-
 */
 
-class Template {
-    private cache: Set<Component>
-
-
+let ERROR = {
+    KEY_NOT_FOUND: (key) => { return `Error: key "${key} not found.` }
 }
-
-export function templateRender(c: Component, buildSet: Set<string>, dirSearch: string) {
-    let dom = c.template
-    mutation(dom, (n) => {
-        if (n.kind === DOM.NodeType.Element) {
-            let tag = n.tagName.toLowerCase()
-            console.log("tag:", tag)
-            if (buildSet.has(tag)) {
-                return true
-            }
-        }
-        return false
-    }, (n) => {
-        modify(n, c, dirSearch)
-    })
-}
-
-
-export function modify(n: DOM.Node, c: Component, dirSearch: string) {
-    console.log("modding", n.tagName)
-    let component = new Component(join(dirSearch, `${n.tagName}.component`))
-    console.log(component)
-
-
-    let referencedComponent = null // find the component to add
-    // referencedComponent.assemble() // perform assembly on referenced component
-
-    // insert referenced component in tree
-}
-
-// export function condition()
-
 
 
 export class TemplateParser extends Parser {
@@ -72,6 +38,8 @@ export class TemplateParser extends Parser {
     sepRight = "}}"
     openBraces = 0
     newString = ""
+    data: object
+
 
     constructor(content: string, separators?: Array<string>) {
         super(content)
@@ -80,6 +48,16 @@ export class TemplateParser extends Parser {
             this.sepRight = separators[1]
         }
     }
+
+    load(content: string, data: object) {
+        this.input = content
+        this.index = 0
+        this.line = 1
+        this.col = 0
+
+        this.data = data
+    }
+
 
     advance(): string {
         while (this.hasNext()) {
@@ -94,20 +72,28 @@ export class TemplateParser extends Parser {
     }
 
     parseReplacement() {
-        console.log("parse replacement", 0)
         assert.equal(this.consume(), "{")
         assert.equal(this.consume(), "{")
 
         // whitespace inside tags is not retained
         this.consumeWhitespace()
-        console.log("parse replacement", 1)
 
         // get data, filter maybe?
         let key = this.parseKey()
         // TODO: find data
-        this.newString += key
+        let val = getProp(this.data, key)
+        console.log("typeof val:", typeof val)
+        if (typeof val !== undefined) {
+            this.newString += val
+        } else {
+            throw ERROR.KEY_NOT_FOUND(key)
+        }
 
-        console.log("parse replacement", 2)
+        if (typeof val == undefined) {
+            console.error(ERROR.KEY_NOT_FOUND(key))
+            throw ERROR.KEY_NOT_FOUND(key)
+        }
+
         this.consumeWhitespace()
         assert.equal(this.consume(), "}")
         assert.equal(this.consume(), "}")
@@ -120,7 +106,7 @@ export class TemplateParser extends Parser {
         letter, a digit, underscore, colon, period, 
         dash, or a “CombiningChar” or “Extender” character, 
         which I believe allows Unicode attributes names. */
-        let regex = new RegExp(/[a-zA-Z0-9\-:_@]/)
+        let regex = new RegExp(/[a-zA-Z0-9\-:_@.]/)
         return this.consumeWhile((char) => {
             return char.match(regex)
         })
@@ -128,3 +114,21 @@ export class TemplateParser extends Parser {
 
 
 }
+
+/** Get a nested property from an object without returning any errors.
+ * If the property or property chain doesn't exist, undefined is returned.
+ * Property names with spaces may use either dot or bracket "[]" notation.
+ * Note that bracketed property names without surrounding quotes will fail the lookup.
+ *      e.g. embedded variables are not supported.
+ * @param {object} obj The object to check
+ * @param {string} prop The property or property chain to get (e.g. obj.prop1.prop1a or obj['prop1'].prop2)
+ * @returns {*|undefined} The value of the objects property or undefined if the property doesn't exist
+ */
+function getProp(obj: object, prop: string) {
+    // Replace [] notation with dot notation
+    prop = prop.replace(/\[["'`](.*)["'`]\]/g, ".$1")
+
+    return prop.split('.').reduce(function (prev, curr) {
+        return prev ? prev[curr] : undefined
+    }, obj || self)
+} // --- end of fn getProp() --- //

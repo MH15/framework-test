@@ -50,6 +50,7 @@ class Component {
                 // this.cache.add
             });
         }
+        let template = new template_1.TemplateParser("");
         traversal_1.mutation(this.template, (n) => {
             if (n.kind === DOM.NodeType.Element) {
                 let tag = n.tagName.toLowerCase();
@@ -70,13 +71,13 @@ class Component {
             }
             if (n.isText) {
                 // TODO: handle templating on text        
-                let template = new template_1.TemplateParser(n.data);
+                template.load(n.data, data);
                 n.data = template.advance();
             }
             if (n.isComment) {
                 // TODO: do we need templating on comments?
             }
-            console.log("here we template!", n.tagName, ":", n.data, ":");
+            // console.log("here we template!", n.tagName, ":", n.data, ":")
         });
         return buildSet;
     }

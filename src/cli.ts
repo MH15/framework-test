@@ -105,7 +105,10 @@ program.command('parse <name>')
         let root = parsing(file)
 
         let data = {
-            test: "frank"
+            test: "frank",
+            ha: {
+                alpha: "h.alphaaa"
+            }
         }
 
         framework.watch(name, data)
