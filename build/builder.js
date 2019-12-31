@@ -9,30 +9,6 @@ const fs_1 = require("fs");
 const Mustache = require("mustache");
 const nunjucks = require("nunjucks");
 const chokidar = require("chokidar");
-function buildAll(component, dirOut, dirInclude) {
-    let buildSet = component.build(dirOut, dirInclude);
-    let includes = {};
-    let joinedStyles = "";
-    let joinedScripts = "";
-    for (let entry of buildSet) {
-        includes[entry] = fs_1.readFileSync(path_1.join(dirOut, "njk", entry + ".njk"), "utf8");
-        joinedStyles += fs_1.readFileSync(path_1.join(dirOut, "style", entry + ".css"), "utf8");
-        joinedScripts += fs_1.readFileSync(path_1.join(dirOut, "script", entry + ".js"), "utf8");
-    }
-    // let rendered = Mustache.render(readFileSync(join(dirOut, "mustache", component.name + ".mustache"), "utf8"), {}, includes)
-    let filename = path_1.join(dirOut, "njk", component.name + ".njk");
-    // let rendered = ejs.render(readFileSync(filename, "utf8"), {
-    //     filename: filename
-    // })
-    nunjucks.configure(path_1.join(dirOut, "njk"));
-    let file = fs_1.readFileSync(filename, "utf8");
-    let rendered = nunjucks.renderString(file);
-    let develop = `<html><head><title>Test</title></head><body>${rendered}<style>${joinedStyles}</style><script>${joinedScripts}</script></body></html>`;
-    fs_1.writeFileSync(path_1.join(dirOut, "develop", "temp.html"), develop);
-    component.buildSet = buildSet;
-    return buildSet;
-}
-exports.buildAll = buildAll;
 /**
  * Watch for changes in any of the component files. If the component that has
  * changed included by the component under build, build all included components.
@@ -74,22 +50,21 @@ function write(component, dirOut) {
     fs_1.writeFileSync(path_1.join(dirOut, "develop", "temp.html"), develop);
 }
 // this is for the route render function
-function combine(component, dirOut, dirSearch) {
-    let includes = {};
-    let joinedStyles = "";
-    let joinedScripts = "";
-    for (let entry of component.buildSet) {
-        includes[entry] = fs_1.readFileSync(path_1.join(dirOut, "njk", entry + ".njk"), "utf8");
-        joinedStyles += fs_1.readFileSync(path_1.join(dirOut, "style", entry + ".css"), "utf8");
-        joinedScripts += fs_1.readFileSync(path_1.join(dirOut, "script", entry + ".js"), "utf8");
-    }
-    // let rendered = Mustache.render(readFileSync(join(dirOut, "mustache", component.name + ".mustache"), "utf8"), {}, includes)
-    let filename = path_1.join(dirOut, "njk", component.name + ".njk");
-    nunjucks.configure(path_1.join(dirOut, "njk"));
-    let file = fs_1.readFileSync(filename, "utf8");
-    let rendered = nunjucks.renderString(file);
-    let develop = `<html><head><title>${component.name}</title></head><body>${rendered}<style>${joinedStyles}</style><script>${joinedScripts}</script></body></html>`;
-    return develop;
-}
-exports.combine = combine;
+// export function combine(component: Component, dirOut: string, dirSearch: string): string {
+//     let includes = {}
+//     let joinedStyles = ""
+//     let joinedScripts = ""
+//     for (let entry of component.buildSet) {
+//         includes[entry] = readFileSync(join(dirOut, "njk", entry + ".njk"), "utf8")
+//         joinedStyles += readFileSync(join(dirOut, "style", entry + ".css"), "utf8")
+//         joinedScripts += readFileSync(join(dirOut, "script", entry + ".js"), "utf8")
+//     }
+//     // let rendered = Mustache.render(readFileSync(join(dirOut, "mustache", component.name + ".mustache"), "utf8"), {}, includes)
+//     let filename = join(dirOut, "njk", component.name + ".njk")
+//     nunjucks.configure(join(dirOut, "njk"))
+//     let file = readFileSync(filename, "utf8")
+//     let rendered = nunjucks.renderString(file)
+//     let develop = `<html><head><title>${component.name}</title></head><body>${rendered}<style>${joinedStyles}</style><script>${joinedScripts}</script></body></html>`
+//     return develop
+// }
 //# sourceMappingURL=builder.js.map

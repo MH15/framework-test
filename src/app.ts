@@ -5,7 +5,7 @@ import { join } from "path"
 /**
  * Config
  */
-import { combine, buildWatch } from './builder'
+import { buildWatch } from './builder'
 import { Component } from "./component"
 import { Server } from "./server/server"
 import { LiveServer } from './server/live-server'
@@ -84,7 +84,9 @@ class Framework {
         if (this.debug) {
             component.build(this.dirOut, this.dirSearch)
         }
-        let content = combine(component, this.dirOut, this.dirSearch)
+        // TODO: don't use the combine function anymore
+        let content = "TODO: don't use combine() anymore. See app.ts, line 88."
+        // let content = combine(component, this.dirOut, this.dirSearch)
         res.writeHead(200)
         res.end(content)
     }
