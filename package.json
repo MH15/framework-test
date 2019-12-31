@@ -3,6 +3,10 @@
   "version": "0.0.2",
   "description": "a full-stack framework for creating web applications",
   "main": "build/app.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mh15/neanderthal.git"
+  },
   "bin": {
     "nean": "./build/cli.js"
   },
@@ -20,7 +24,6 @@
     "copy-dir": "^1.2.0",
     "ejs": "^3.0.1",
     "mustache": "^3.1.0",
-    "nunjucks": "^3.2.0",
     "path-to-regexp": "^6.1.0",
     "ws": "^7.2.0",
     "sass": "^1.24.0"
