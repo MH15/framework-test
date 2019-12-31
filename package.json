@@ -1,7 +1,7 @@
 {
   "name": "neanderthal",
   "version": "0.0.2",
-  "description": "",
+  "description": "a full-stack framework for creating web applications",
   "main": "build/app.js",
   "bin": {
     "nean": "./build/cli.js"
@@ -29,7 +29,6 @@
     "node-sass": "^4.13.0",
     "nunjucks": "^3.2.0",
     "path-to-regexp": "^6.1.0",
-    "pejs": "^0.6.5",
     "ws": "^7.2.0",
     "xmldom": "^0.2.1"
   },
