@@ -1,14 +1,14 @@
 
-import { existsSync, readdirSync, readFileSync } from 'fs';
-import { ServerResponse } from "http";
-import { join } from "path";
+import { existsSync, readdirSync, readFileSync } from 'fs'
+import { ServerResponse } from "http"
+import { join } from "path"
 /**
  * Config
  */
-import { combine, buildWatch } from './builder';
-import { Component } from "./component";
-import { Server } from "./server/server";
-import { LiveServer } from './server/live-server';
+import { combine, buildWatch } from './builder'
+import { Component } from "./component"
+import { Server } from "./server/server"
+import { LiveServer } from './server/live-server'
 const WebSocket = require("ws")
 
 
@@ -147,4 +147,4 @@ function renderComponent(res: ServerResponse, name: string) {
     }
 }
 
-export { Framework, renderComponent };
+export { Framework, renderComponent }

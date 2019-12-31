@@ -14,7 +14,6 @@ const fs_1 = require("fs");
 const builder_1 = require("./builder");
 const live_server_1 = require("./server/live-server");
 const file_1 = require("./utils/file");
-const current_parser_1 = require("./dom/current-parser");
 const app_1 = require("./app");
 const WebSocket = require("ws");
 const commander = require('commander');
@@ -94,7 +93,6 @@ program.command('parse <name>')
     const DIR_INCLUDE = path_1.join(baseDir, 'components');
     let file = fs_1.readFileSync(path_1.join(DIR_INCLUDE, name + ".component"), "utf8");
     // console.log(file)
-    let root = current_parser_1.parsing(file);
     let data = {
         test: "frank",
         ha: {

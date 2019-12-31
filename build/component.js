@@ -4,7 +4,7 @@ const fs_1 = require("fs");
 const current_parser_1 = require("./dom/current-parser");
 const path_1 = require("path");
 const file_1 = require("./utils/file");
-const sass = require('node-sass');
+const sass = require('sass');
 const finders_1 = require("./dom/finders");
 const DOM = require("./dom/node");
 const template_1 = require("./template");
@@ -27,11 +27,13 @@ class Component {
         this.template = finders_1.getElementsByTagName(dom, "template")[0];
         this.style = finders_1.getElementsByTagName(dom, "style")[0];
         this.script = finders_1.getElementsByTagName(dom, "script")[0];
+        this.styleString = this.style.innerHTML;
+        this.scriptString = this.script.innerHTML;
+        console.log("Script", this.script.innerHTML);
     }
     // Use the template methods to do this shit
     assemble(data, dirSearch) {
         this.data = data;
-        console.log("assemble");
         let buildSet = new Set();
         buildSet.add(this.name);
         let built = new Set();
@@ -50,7 +52,6 @@ class Component {
                 // this.cache.add
             });
         }
-        let template = new template_1.TemplateParser("");
         traversal_1.mutation(this.template, (n) => {
             if (n.kind === DOM.NodeType.Element) {
                 let tag = n.tagName.toLowerCase();
@@ -58,11 +59,19 @@ class Component {
                 if (buildSet.has(tag)) {
                     return true;
                 }
+                if (tag == "script") {
+                    console.log("SCRIPT", n);
+                }
             }
             return false;
         }, (n) => {
             // TODO: slots!
             let componentToInsert = findComponent(built, n.tagName);
+            // Compile styles and scripts
+            let style = componentToInsert.styleString;
+            let script = componentToInsert.scriptString;
+            this.styleString += componentToInsert.styleString;
+            this.scriptString += componentToInsert.scriptString;
             for (let child of componentToInsert.template.children) {
                 n.appendChild(child);
             }
@@ -91,11 +100,9 @@ class Component {
         let result = "";
         this.buildSet = new Set();
         this.buildSet.add(this.name);
-        // newDir(join(buildPath, "ejs"))
         // newDir(join(buildPath, "njk"))
         file_1.newDir(path_1.join(buildPath, "style"));
         file_1.newDir(path_1.join(buildPath, "script"));
-        // build mustache to dist/ejs folder
         // let mustachePath = join(buildPath, "njk", this.name + ".njk")
         // writeFileSync(mustachePath, this.template.innerHTML)
         // build style to dist/style folder

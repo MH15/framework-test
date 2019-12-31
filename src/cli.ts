@@ -5,7 +5,6 @@ import { readFileSync, writeFileSync } from "fs"
 import { buildWatch } from "./builder"
 import { LiveServer } from './server/live-server'
 import { newDir } from "./utils/file"
-import { parsing } from "./dom/current-parser"
 import { Framework } from "./app"
 const WebSocket = require("ws")
 
@@ -102,7 +101,6 @@ program.command('parse <name>')
         const DIR_INCLUDE = join(baseDir, 'components')
         let file = readFileSync(join(DIR_INCLUDE, name + ".component"), "utf8")
         // console.log(file)
-        let root = parsing(file)
 
         let data = {
             test: "frank",

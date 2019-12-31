@@ -8,7 +8,6 @@ const path_1 = require("path");
 const fs_1 = require("fs");
 const Mustache = require("mustache");
 const nunjucks = require("nunjucks");
-const ejs = require("ejs");
 const chokidar = require("chokidar");
 function buildAll(component, dirOut, dirInclude) {
     let buildSet = component.build(dirOut, dirInclude);
@@ -44,7 +43,7 @@ exports.buildAll = buildAll;
 function buildWatch(data, dirOut, dirSearch, pathRoot, wss) {
     let root = new component_1.Component(pathRoot);
     let buildSetInitial = root.assemble(data, dirSearch);
-    console.log(root.template.print());
+    write(root, dirOut);
     console.log("buildSet", buildSetInitial);
     chokidar.watch(dirSearch, {
         ignoreInitial: true
@@ -52,14 +51,28 @@ function buildWatch(data, dirOut, dirSearch, pathRoot, wss) {
         if (buildSetInitial.has(path_1.parse(path).name.toLowerCase())) {
             console.log("Changes made. Building...");
             root.load(pathRoot);
-            root.assemble(data, dirSearch);
+            buildSetInitial = root.assemble(data, dirSearch);
             // buildSetInitial = buildAll(root, dirOut, dirSearch)
-            console.log(root.template.print());
+            write(root, dirOut);
         }
         wss.send('reload');
     });
 }
 exports.buildWatch = buildWatch;
+function write(component, dirOut) {
+    // console.log(component.template.innerHTML)
+    let template = component.template.innerHTML;
+    let styles = component.styleString;
+    let scripts = component.scriptString;
+    let develop = `<html><head>
+    <title>${component.name}</title>
+    <style>${styles}</style>
+    </head>
+    <body>${template}
+    <script>${scripts}</script>
+    </body></html>`;
+    fs_1.writeFileSync(path_1.join(dirOut, "develop", "temp.html"), develop);
+}
 // this is for the route render function
 function combine(component, dirOut, dirSearch) {
     let includes = {};

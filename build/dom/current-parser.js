@@ -3,6 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const DOM = require("./node");
 const finders_1 = require("./finders");
 const html_parser_1 = require("./html-parser");
+/**
+ * Parse a string in Single File Component format.
+ * @param content: the string data
+ */
 function parseHTML(content) {
     let parser = new html_parser_1.HTMLParser(content);
     let nodes = parser.parseNodes(null);
@@ -17,7 +21,8 @@ function parseHTML(content) {
     return root;
 }
 exports.parseHTML = parseHTML;
-function parsing(content) {
+// Test Code
+function parsingTest(content) {
     var hrstart = process.hrtime();
     let nodes;
     for (let i = 0; i < 1; i++) {
@@ -56,5 +61,4 @@ function parsing(content) {
     // console.log("all:", elsByID)
     return root;
 }
-exports.parsing = parsing;
 //# sourceMappingURL=current-parser.js.map

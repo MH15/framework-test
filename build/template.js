@@ -1,24 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Template uses the DOM module to search and replace items in the DOM.
+ *
+ */
 const parser_1 = require("./utils/parser");
 const assert = require("assert");
-/**
-pseudocode:
-
-function combine(node) {
-    gather included files
-        find all included components
-    mutate the node and its children
-        whenever an included template appears in the root DOM,
-            parse said template
-                (this includes recursion)
-            copy it into place in the root DOM
-
-    1. do the DOM combine using mutation methdods
-    2. do the style and script combine using string methods
-
-}
-*/
 let ERROR = {
     KEY_NOT_FOUND: (key) => { return `Error: key "${key} not found.`; }
 };
@@ -62,7 +49,7 @@ class TemplateParser extends parser_1.Parser {
         let key = this.parseKey();
         // TODO: find data
         let val = getProp(this.data, key);
-        console.log(`key: ${key}, value: ${val}`);
+        // console.log(`key: ${key}, value: ${val}`)
         if (val == undefined) {
             // TODO: better errror handling
             throw new Error(ERROR.KEY_NOT_FOUND(key));

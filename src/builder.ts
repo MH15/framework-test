@@ -10,7 +10,6 @@ const Mustache = require("mustache")
 
 const nunjucks = require("nunjucks")
 
-const ejs = require("ejs")
 import * as chokidar from "chokidar"
 
 
@@ -41,6 +40,7 @@ export function buildAll(component: Component, dirOut: string, dirInclude: strin
 }
 
 
+
 /**
  * Watch for changes in any of the component files. If the component that has
  * changed included by the component under build, build all included components.
@@ -52,7 +52,8 @@ export function buildWatch(data: object, dirOut: string, dirSearch: string, path
     let root = new Component(pathRoot)
 
     let buildSetInitial = root.assemble(data, dirSearch)
-    console.log(root.template.print())
+    write(root, dirOut)
+
     console.log("buildSet", buildSetInitial)
 
     chokidar.watch(dirSearch, {
@@ -61,12 +62,29 @@ export function buildWatch(data: object, dirOut: string, dirSearch: string, path
         if (buildSetInitial.has(parse(path).name.toLowerCase())) {
             console.log("Changes made. Building...")
             root.load(pathRoot)
-            root.assemble(data, dirSearch)
+            buildSetInitial = root.assemble(data, dirSearch)
             // buildSetInitial = buildAll(root, dirOut, dirSearch)
-            console.log(root.template.print())
+
+            write(root, dirOut)
         }
         wss.send('reload')
     })
+}
+
+function write(component: Component, dirOut) {
+    // console.log(component.template.innerHTML)
+    let template = component.template.innerHTML
+    let styles = component.styleString
+    let scripts = component.scriptString
+
+    let develop = `<html><head>
+    <title>${component.name}</title>
+    <style>${styles}</style>
+    </head>
+    <body>${template}
+    <script>${scripts}</script>
+    </body></html>`
+    writeFileSync(join(dirOut, "develop", "temp.html"), develop)
 }
 
 // this is for the route render function

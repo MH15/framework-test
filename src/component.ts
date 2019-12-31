@@ -4,7 +4,7 @@ import { parseHTML } from './dom/current-parser'
 
 import { join, parse } from "path"
 import { newDir } from "./utils/file"
-const sass = require('node-sass')
+const sass = require('sass')
 
 import { getElementsByTagName } from "./dom/finders"
 
@@ -26,10 +26,18 @@ interface ComponentElement {
  */
 class Component {
     public name: string
+
+    // Source representations
     public template: DOM.Node
     public style: DOM.Node
     public script: DOM.Node
     public buildSet: Set<string>
+
+    // Rendered representations
+    public styleString: string
+    public scriptString: string
+
+    // Component data
     data: object
 
 
@@ -51,12 +59,15 @@ class Component {
         this.style = getElementsByTagName(dom, "style")[0]
         this.script = getElementsByTagName(dom, "script")[0]
 
+        this.styleString = this.style.innerHTML
+        this.scriptString = this.script.innerHTML
+        console.log("Script", this.script.innerHTML)
+
     }
 
     // Use the template methods to do this shit
     public assemble(data: object, dirSearch: string) {
         this.data = data
-        console.log("assemble")
         let buildSet = new Set<string>()
         buildSet.add(this.name)
         let built = new Set<Component>()
@@ -77,7 +88,6 @@ class Component {
             })
         }
 
-        let template = new TemplateParser("")
         mutation(this.template, (n) => {
             if (n.kind === DOM.NodeType.Element) {
                 let tag = n.tagName.toLowerCase()
@@ -85,11 +95,22 @@ class Component {
                 if (buildSet.has(tag)) {
                     return true
                 }
+
+                if (tag == "script") {
+                    console.log("SCRIPT", n)
+                }
             }
             return false
         }, (n) => { // IF
             // TODO: slots!
             let componentToInsert = findComponent(built, n.tagName)
+
+            // Compile styles and scripts
+            let style = componentToInsert.styleString
+            let script = componentToInsert.scriptString
+            this.styleString += componentToInsert.styleString
+            this.scriptString += componentToInsert.scriptString
+
             for (let child of componentToInsert.template.children) {
                 n.appendChild(child)
             }
@@ -111,7 +132,6 @@ class Component {
         })
 
         return buildSet
-
     }
 
 
@@ -123,12 +143,10 @@ class Component {
         let result = ""
         this.buildSet = new Set<string>()
         this.buildSet.add(this.name)
-        // newDir(join(buildPath, "ejs"))
         // newDir(join(buildPath, "njk"))
         newDir(join(buildPath, "style"))
         newDir(join(buildPath, "script"))
 
-        // build mustache to dist/ejs folder
         // let mustachePath = join(buildPath, "njk", this.name + ".njk")
         // writeFileSync(mustachePath, this.template.innerHTML)
 

@@ -1,9 +1,13 @@
 import * as DOM from "./node"
-import { getElementById, getElementsByTagName } from "./finders"
+import { getElementsByTagName } from "./finders"
 
 
 import { HTMLParser } from "./html-parser"
 
+/**
+ * Parse a string in Single File Component format.
+ * @param content: the string data
+ */
 export function parseHTML(content: string): any {
     let parser = new HTMLParser(content)
 
@@ -19,7 +23,9 @@ export function parseHTML(content: string): any {
     return root
 }
 
-export function parsing(content: string): DOM.Node {
+
+// Test Code
+function parsingTest(content: string): DOM.Node {
 
     var hrstart = process.hrtime()
     let nodes

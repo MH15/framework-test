@@ -2,31 +2,11 @@
  * Template uses the DOM module to search and replace items in the DOM.
  * 
  */
-import * as DOM from "./dom/node"
-import { mutation } from "./dom/traversal"
-import { Component } from "./component"
-import { join, sep } from "path"
 import { Parser } from "./utils/parser"
 import * as assert from "assert"
 import { type } from "os"
 
-/**
-pseudocode:
 
-function combine(node) {
-    gather included files
-        find all included components
-    mutate the node and its children
-        whenever an included template appears in the root DOM,
-            parse said template
-                (this includes recursion)
-            copy it into place in the root DOM
-
-    1. do the DOM combine using mutation methdods
-    2. do the style and script combine using string methods
-
-}
-*/
 
 let ERROR = {
     KEY_NOT_FOUND: (key) => { return `Error: key "${key} not found.` }
@@ -82,7 +62,7 @@ export class TemplateParser extends Parser {
         let key = this.parseKey()
         // TODO: find data
         let val = getProp(this.data, key)
-        console.log(`key: ${key}, value: ${val}`)
+        // console.log(`key: ${key}, value: ${val}`)
 
         if (val == undefined) {
             // TODO: better errror handling
