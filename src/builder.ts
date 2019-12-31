@@ -52,6 +52,7 @@ export function buildWatch(data: object, dirOut: string, dirSearch: string, path
     let root = new Component(pathRoot)
 
     let buildSetInitial = root.assemble(data, dirSearch)
+    console.log(root.template.print())
     console.log("buildSet", buildSetInitial)
 
     chokidar.watch(dirSearch, {

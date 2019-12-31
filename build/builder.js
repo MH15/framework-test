@@ -44,6 +44,7 @@ exports.buildAll = buildAll;
 function buildWatch(data, dirOut, dirSearch, pathRoot, wss) {
     let root = new component_1.Component(pathRoot);
     let buildSetInitial = root.assemble(data, dirSearch);
+    console.log(root.template.print());
     console.log("buildSet", buildSetInitial);
     chokidar.watch(dirSearch, {
         ignoreInitial: true

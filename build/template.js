@@ -62,16 +62,13 @@ class TemplateParser extends parser_1.Parser {
         let key = this.parseKey();
         // TODO: find data
         let val = getProp(this.data, key);
-        console.log("typeof val:", typeof val);
-        if (typeof val !== undefined) {
-            this.newString += val;
+        console.log(`key: ${key}, value: ${val}`);
+        if (val == undefined) {
+            // TODO: better errror handling
+            throw new Error(ERROR.KEY_NOT_FOUND(key));
         }
         else {
-            throw ERROR.KEY_NOT_FOUND(key);
-        }
-        if (typeof val == undefined) {
-            console.error(ERROR.KEY_NOT_FOUND(key));
-            throw ERROR.KEY_NOT_FOUND(key);
+            this.newString += val;
         }
         this.consumeWhitespace();
         assert.equal(this.consume(), "}");

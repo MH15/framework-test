@@ -10,7 +10,7 @@ import { getElementsByTagName } from "./dom/finders"
 
 
 import * as DOM from "./dom/node"
-import { TemplateParser } from './template';
+import { TemplateParser } from './template'
 import { mutation, multiMutation } from "./dom/traversal"
 
 
@@ -88,6 +88,7 @@ class Component {
             }
             return false
         }, (n) => { // IF
+            // TODO: slots!
             let componentToInsert = findComponent(built, n.tagName)
             for (let child of componentToInsert.template.children) {
                 n.appendChild(child)
@@ -97,9 +98,10 @@ class Component {
                 // TODO: handle templating on elements
             }
             if (n.isText) {
-                // TODO: handle templating on text        
-                template.load(n.data, data)
-                n.data = template.advance()
+                // template.load(n.data, data)
+                let t = new TemplateParser(n.data)
+                t.load(n.data, data)
+                n.data = t.advance()
 
             }
             if (n.isComment) {

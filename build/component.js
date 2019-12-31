@@ -61,6 +61,7 @@ class Component {
             }
             return false;
         }, (n) => {
+            // TODO: slots!
             let componentToInsert = findComponent(built, n.tagName);
             for (let child of componentToInsert.template.children) {
                 n.appendChild(child);
@@ -70,9 +71,10 @@ class Component {
                 // TODO: handle templating on elements
             }
             if (n.isText) {
-                // TODO: handle templating on text        
-                template.load(n.data, data);
-                n.data = template.advance();
+                // template.load(n.data, data)
+                let t = new template_1.TemplateParser(n.data);
+                t.load(n.data, data);
+                n.data = t.advance();
             }
             if (n.isComment) {
                 // TODO: do we need templating on comments?
