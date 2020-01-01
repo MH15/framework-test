@@ -1,5 +1,5 @@
 # About Neanderthal
-a full-stack framework for creating web applications
+A full-stack framework for creating web applications
 
 # Structure
 `build` - built Javascript files
