@@ -12,6 +12,7 @@ const program = new commander.Command()
 let baseDir = process.cwd()
 
 
+// TODO: use the file in /default instead
 let component = `<template></template>
 
 <style lang="scss">    
@@ -65,7 +66,6 @@ program.command('create <type> <name>')
 program.command('develop <name>')
     .description('Develop a component using the live server.')
     .action(async (name) => {
-        console.log("fuck")
         let framework = new Framework(baseDir)
 
         // TODO: get data from a file?
@@ -79,11 +79,5 @@ program.command('develop <name>')
     })
 
 
-
-program.command('fuck')
-    .action(async () => {
-        console.log("WHAT THE H")
-
-    })
 
 program.parse(process.argv)

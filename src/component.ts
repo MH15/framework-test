@@ -147,8 +147,6 @@ class Component {
         newDir(join(buildPath, "style"))
         newDir(join(buildPath, "script"))
 
-        // let mustachePath = join(buildPath, "njk", this.name + ".njk")
-        // writeFileSync(mustachePath, this.template.innerHTML)
 
         // build style to dist/style folder
         let stylePath = join(buildPath, "style", this.name + ".css")

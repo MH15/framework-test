@@ -1,9 +1,0 @@
-<template></template>
-
-<style lang="scss">
-    h1 {
-        background: orange;
-    }
-</style>
-
-<script></script>
