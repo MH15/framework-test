@@ -67,15 +67,22 @@ class Framework {
      * @param name name of Component to render
      */
     render(res, name) {
-        let component = this.componentCache.find((c) => {
-            return c.name === name;
-        });
-        if (this.debug) {
-            component.build(this.dirOut, this.dirSearch);
-        }
-        // TODO: don't use the combine function anymore
+        // let component = this.componentCache.find((c) => {
+        //     return c.name === name
+        // })
+        // if (this.debug) {
+        //     component.build(this.dirOut, this.dirSearch)
+        // }
+        let data = {
+            test: "frank",
+            ha: {
+                alpha: "h.alphaaa"
+            }
+        };
+        let component = this.locateComponent(name);
+        console.log("found:", component);
+        component.assemble(data, this.dirSearch);
         let content = "TODO: don't use combine() anymore. See app.ts, line 88.";
-        // let content = combine(component, this.dirOut, this.dirSearch)
         res.writeHead(200);
         res.end(content);
     }
