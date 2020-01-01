@@ -10,9 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = require("fs");
 const path_1 = require("path");
-/**
- * Config
- */
 const builder_1 = require("./builder");
 const component_1 = require("./component");
 const server_1 = require("./server/server");
@@ -67,12 +64,6 @@ class Framework {
      * @param name name of Component to render
      */
     render(res, name) {
-        // let component = this.componentCache.find((c) => {
-        //     return c.name === name
-        // })
-        // if (this.debug) {
-        //     component.build(this.dirOut, this.dirSearch)
-        // }
         let data = {
             test: "frank",
             ha: {

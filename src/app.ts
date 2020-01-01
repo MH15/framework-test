@@ -2,9 +2,7 @@
 import { existsSync, readdirSync, readFileSync } from 'fs'
 import { ServerResponse } from "http"
 import { join } from "path"
-/**
- * Config
- */
+
 import { buildWatch, combine } from './builder'
 import { Component } from "./component"
 import { Server } from "./server/server"
@@ -54,10 +52,10 @@ class Framework {
      * @param name 
      */
     buildComponent(name: string) {
-
         let component = this.locateComponent(name)
         component.build(this.dirOut, this.dirSearch)
         this.componentCache.push(component)
+
     }
 
     /**
@@ -78,12 +76,6 @@ class Framework {
      * @param name name of Component to render
      */
     render(res: ServerResponse, name: string) {
-        // let component = this.componentCache.find((c) => {
-        //     return c.name === name
-        // })
-        // if (this.debug) {
-        //     component.build(this.dirOut, this.dirSearch)
-        // }
         let data = {
             test: "frank",
             ha: {
@@ -120,8 +112,8 @@ class Framework {
         let routes = require(join(this.appRoot, "config", "routes.json"))
         this.server = new Server(join(this.appRoot, "controllers"), routes)
         this.server.start(port)
-    }
 
+    }
 
     async watch(name: string, data: object) {
         let pathToComponent = join(this.dirSearch, `${name}.component`)
