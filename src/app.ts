@@ -93,7 +93,7 @@ class Framework {
         let component = this.locateComponent(name)
         console.log("found:", component)
         component.assemble(data, this.dirSearch)
-        let content = "TODO: don't use combine() anymore. See app.ts, line 88."
+        let content = combine(component)
         res.writeHead(200)
         res.end(content)
     }
