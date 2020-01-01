@@ -73,6 +73,7 @@ function write(component: Component, dirOut) {
 
 export function combine(component: Component): string {
     let template = component.template.innerHTML
+    console.log("rendered:", template)
     let styles = component.styleString
     let scripts = component.scriptString
 

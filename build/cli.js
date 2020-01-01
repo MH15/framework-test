@@ -64,6 +64,7 @@ program.command('create <type> <name>')
 program.command('develop <name>')
     .description('Develop a component using the live server.')
     .action((name) => __awaiter(this, void 0, void 0, function* () {
+    console.log("fuck");
     let framework = new app_1.Framework(baseDir);
     // TODO: get data from a file?
     let data = {
@@ -73,6 +74,10 @@ program.command('develop <name>')
         }
     };
     framework.watch(name, data);
+}));
+program.command('fuck')
+    .action(() => __awaiter(this, void 0, void 0, function* () {
+    console.log("WHAT THE H");
 }));
 program.parse(process.argv);
 //# sourceMappingURL=cli.js.map

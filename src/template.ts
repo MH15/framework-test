@@ -41,13 +41,28 @@ export class TemplateParser extends Parser {
 
     advance(): string {
         while (this.hasNext()) {
+            console.log("peeks:", this.peek())
+            console.log("p", 0)
+
             this.newString += this.consumeWhitespace()
-            if (this.startsWith("{{")) {
-                this.parseReplacement()
-            } else {
-                this.newString += this.consume()
+
+            if (this.hasNext()) {
+                console.log("p", 1)
+                if (this.startsWith("{{")) {
+                    console.log("p", 2)
+                    console.log("starts with {{")
+                    this.parseReplacement()
+                } else {
+                    console.log("p", 3)
+                    let char = this.consume()
+                    console.log("char:", char)
+                    this.newString += char
+                }
+                console.log("p", 4)
             }
+
         }
+        console.log("p", 5)
         return this.newString
     }
 
@@ -62,7 +77,7 @@ export class TemplateParser extends Parser {
         let key = this.parseKey()
         // TODO: find data
         let val = getProp(this.data, key)
-        // console.log(`key: ${key}, value: ${val}`)
+        console.log(`key: ${key}, value: ${val}`)
 
         if (val == undefined) {
             // TODO: better errror handling

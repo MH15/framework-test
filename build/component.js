@@ -29,7 +29,6 @@ class Component {
         this.script = finders_1.getElementsByTagName(dom, "script")[0];
         this.styleString = this.style.innerHTML;
         this.scriptString = this.script.innerHTML;
-        console.log("Script", this.script.innerHTML);
     }
     // Use the template methods to do this shit
     assemble(data, dirSearch) {
@@ -81,6 +80,7 @@ class Component {
             }
             if (n.isText) {
                 // template.load(n.data, data)
+                console.log("ENTER");
                 let t = new template_1.TemplateParser(n.data);
                 t.load(n.data, data);
                 n.data = t.advance();

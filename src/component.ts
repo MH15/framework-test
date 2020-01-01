@@ -61,7 +61,6 @@ class Component {
 
         this.styleString = this.style.innerHTML
         this.scriptString = this.script.innerHTML
-        console.log("Script", this.script.innerHTML)
 
     }
 
@@ -120,6 +119,7 @@ class Component {
             }
             if (n.isText) {
                 // template.load(n.data, data)
+                console.log("ENTER")
                 let t = new TemplateParser(n.data)
                 t.load(n.data, data)
                 n.data = t.advance()

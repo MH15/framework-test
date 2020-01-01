@@ -58,6 +58,7 @@ function write(component, dirOut) {
 // }
 function combine(component) {
     let template = component.template.innerHTML;
+    console.log("rendered:", template);
     let styles = component.styleString;
     let scripts = component.scriptString;
     let develop = `<html><head>

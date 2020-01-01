@@ -65,6 +65,7 @@ program.command('create <type> <name>')
 program.command('develop <name>')
     .description('Develop a component using the live server.')
     .action(async (name) => {
+        console.log("fuck")
         let framework = new Framework(baseDir)
 
         // TODO: get data from a file?
@@ -77,5 +78,12 @@ program.command('develop <name>')
         framework.watch(name, data)
     })
 
-program.parse(process.argv)
 
+
+program.command('fuck')
+    .action(async () => {
+        console.log("WHAT THE H")
+
+    })
+
+program.parse(process.argv)

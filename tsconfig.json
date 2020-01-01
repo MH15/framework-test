@@ -2,11 +2,10 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es2016",
-        "outDir": "dist",
+        "outDir": "build",
         "baseUrl": "src",
         "sourceMap": true
     },
-    "outDir": "dist",
     "baseUrl": "src",
     "exclude": [
         "node_modules",
