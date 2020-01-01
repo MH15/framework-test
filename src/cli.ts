@@ -1,12 +1,9 @@
 #!/usr/bin/env node
 
 import { join } from "path"
-import { readFileSync, writeFileSync } from "fs"
-import { buildWatch } from "./builder"
-import { LiveServer } from './server/live-server'
+import { writeFileSync } from "fs"
 import { newDir } from "./utils/file"
 import { Framework } from "./app"
-const WebSocket = require("ws")
 
 const commander = require('commander')
 const program = new commander.Command()
@@ -68,51 +65,17 @@ program.command('create <type> <name>')
 program.command('develop <name>')
     .description('Develop a component using the live server.')
     .action(async (name) => {
-        const DIR_OUT = join(baseDir, 'dist')
-        const DIR_SEARCH = join(baseDir, 'components')
-        const DIR_ROOT = join(baseDir, "components", `${name}.component`)
-        const DEVELOP_ROOT = join(baseDir, "dist", "develop")
-
-        // TODO: combine LiveServer and WebSocketController into one class that extends Server
-        let liveServer = new LiveServer(DEVELOP_ROOT)
-        await liveServer.start(8081)
-
-        console.log("starting liveserver")
-
-        const wss = new WebSocket.Server({ port: 8089 })
-        let connection
-        wss.on('connection', (ws) => {
-            ws.on('message', message => {
-                // console.log(`Received message => ${message}`)
-            })
-            ws.send('ho!')
-            connection = ws
-            buildWatch({}, DIR_OUT, DIR_SEARCH, DIR_ROOT, connection)
-
-        })
-
-
-    })
-
-program.command('parse <name>')
-    .description('Parse a component using the new parser')
-    .action(async (name) => {
         let framework = new Framework(baseDir)
-        const DIR_INCLUDE = join(baseDir, 'components')
-        let file = readFileSync(join(DIR_INCLUDE, name + ".component"), "utf8")
-        // console.log(file)
 
+        // TODO: get data from a file?
         let data = {
             test: "frank",
             ha: {
                 alpha: "h.alphaaa"
             }
         }
-
         framework.watch(name, data)
-
     })
-
 
 program.parse(process.argv)
 

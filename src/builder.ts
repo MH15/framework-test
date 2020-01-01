@@ -6,9 +6,7 @@ import { Component } from './component'
 import { join, parse } from "path"
 import { readFileSync, writeFileSync } from 'fs'
 
-const Mustache = require("mustache")
 
-const nunjucks = require("nunjucks")
 
 import * as chokidar from "chokidar"
 
@@ -46,17 +44,8 @@ export function buildWatch(data: object, dirOut: string, dirSearch: string, path
 
 function write(component: Component, dirOut) {
     // console.log(component.template.innerHTML)
-    let template = component.template.innerHTML
-    let styles = component.styleString
-    let scripts = component.scriptString
 
-    let develop = `<html><head>
-    <title>${component.name}</title>
-    <style>${styles}</style>
-    </head>
-    <body>${template}
-    <script>${scripts}</script>
-    </body></html>`
+    let develop = combine(component)
     writeFileSync(join(dirOut, "develop", "temp.html"), develop)
 }
 
@@ -81,3 +70,18 @@ function write(component: Component, dirOut) {
 
 //     return develop
 // }
+
+export function combine(component: Component): string {
+    let template = component.template.innerHTML
+    let styles = component.styleString
+    let scripts = component.scriptString
+
+    let develop = `<html><head>
+    <title>${component.name}</title>
+    <style>${styles}</style>
+    </head>
+    <body>${template}
+    <script>${scripts}</script>
+    </body></html>`
+    return develop
+}

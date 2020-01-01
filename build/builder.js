@@ -6,8 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const component_1 = require("./component");
 const path_1 = require("path");
 const fs_1 = require("fs");
-const Mustache = require("mustache");
-const nunjucks = require("nunjucks");
 const chokidar = require("chokidar");
 /**
  * Watch for changes in any of the component files. If the component that has
@@ -37,16 +35,7 @@ function buildWatch(data, dirOut, dirSearch, pathRoot, wss) {
 exports.buildWatch = buildWatch;
 function write(component, dirOut) {
     // console.log(component.template.innerHTML)
-    let template = component.template.innerHTML;
-    let styles = component.styleString;
-    let scripts = component.scriptString;
-    let develop = `<html><head>
-    <title>${component.name}</title>
-    <style>${styles}</style>
-    </head>
-    <body>${template}
-    <script>${scripts}</script>
-    </body></html>`;
+    let develop = combine(component);
     fs_1.writeFileSync(path_1.join(dirOut, "develop", "temp.html"), develop);
 }
 // this is for the route render function
@@ -67,4 +56,18 @@ function write(component, dirOut) {
 //     let develop = `<html><head><title>${component.name}</title></head><body>${rendered}<style>${joinedStyles}</style><script>${joinedScripts}</script></body></html>`
 //     return develop
 // }
+function combine(component) {
+    let template = component.template.innerHTML;
+    let styles = component.styleString;
+    let scripts = component.scriptString;
+    let develop = `<html><head>
+    <title>${component.name}</title>
+    <style>${styles}</style>
+    </head>
+    <body>${template}
+    <script>${scripts}</script>
+    </body></html>`;
+    return develop;
+}
+exports.combine = combine;
 //# sourceMappingURL=builder.js.map
