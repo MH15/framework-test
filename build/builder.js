@@ -14,8 +14,9 @@ const chokidar = require("chokidar");
  * @param dirSearch the directory to search for included components in
  * @param pathRoot the path to the component
  */
-function buildWatch(data, dirOut, dirSearch, pathRoot, wss) {
+function buildWatch(dataPath, dirOut, dirSearch, pathRoot, wss) {
     let root = new component_1.Component(pathRoot);
+    let data = JSON.parse(fs_1.readFileSync(dataPath, "utf8"));
     let buildSetInitial = root.assemble(data, dirSearch);
     write(root, dirOut);
     console.log("buildSet", buildSetInitial);
@@ -25,6 +26,7 @@ function buildWatch(data, dirOut, dirSearch, pathRoot, wss) {
         if (buildSetInitial.has(path_1.parse(path).name.toLowerCase())) {
             console.log("Changes made. Building...");
             root.load(pathRoot);
+            data = JSON.parse(fs_1.readFileSync(dataPath, "utf8"));
             buildSetInitial = root.assemble(data, dirSearch);
             // buildSetInitial = buildAll(root, dirOut, dirSearch)
             write(root, dirOut);

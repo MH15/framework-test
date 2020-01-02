@@ -63,15 +63,9 @@ class Framework {
      * @param res the server response object
      * @param name name of Component to render
      */
-    render(res, name) {
-        let data = {
-            test: "frank",
-            ha: {
-                alpha: "h.alphaaa"
-            }
-        };
+    render(res, name, data) {
         let component = this.locateComponent(name);
-        console.log("found:", component);
+        // console.log("found:", component)
         component.assemble(data, this.dirSearch);
         let content = builder_1.combine(component);
         res.writeHead(200);
@@ -98,7 +92,7 @@ class Framework {
         this.server = new server_1.Server(path_1.join(this.appRoot, "controllers"), routes);
         this.server.start(port);
     }
-    watch(name, data) {
+    watch(name, dataPath) {
         return __awaiter(this, void 0, void 0, function* () {
             let pathToComponent = path_1.join(this.dirSearch, `${name}.component`);
             let liveServer = new live_server_1.LiveServer(this.developPath);
@@ -111,7 +105,7 @@ class Framework {
                 });
                 ws.send('ho!');
                 connection = ws;
-                builder_1.buildWatch(data, this.dirOut, this.dirSearch, pathToComponent, connection);
+                builder_1.buildWatch(dataPath, this.dirOut, this.dirSearch, pathToComponent, connection);
             });
         });
     }

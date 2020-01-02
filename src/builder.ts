@@ -19,8 +19,10 @@ import * as chokidar from "chokidar"
  * @param dirSearch the directory to search for included components in 
  * @param pathRoot the path to the component
  */
-export function buildWatch(data: object, dirOut: string, dirSearch: string, pathRoot: string, wss: WebSocket) {
+export function buildWatch(dataPath: string, dirOut: string, dirSearch: string, pathRoot: string, wss: WebSocket) {
     let root = new Component(pathRoot)
+
+    let data = JSON.parse(readFileSync(dataPath, "utf8"))
 
     let buildSetInitial = root.assemble(data, dirSearch)
     write(root, dirOut)
@@ -33,6 +35,8 @@ export function buildWatch(data: object, dirOut: string, dirSearch: string, path
         if (buildSetInitial.has(parse(path).name.toLowerCase())) {
             console.log("Changes made. Building...")
             root.load(pathRoot)
+
+            data = JSON.parse(readFileSync(dataPath, "utf8"))
             buildSetInitial = root.assemble(data, dirSearch)
             // buildSetInitial = buildAll(root, dirOut, dirSearch)
 

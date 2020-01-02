@@ -58,9 +58,6 @@ class Component {
                 if (buildSet.has(tag)) {
                     return true;
                 }
-                if (tag == "script") {
-                    console.log("SCRIPT", n);
-                }
             }
             return false;
         }, (n) => {
@@ -71,18 +68,51 @@ class Component {
             let script = componentToInsert.scriptString;
             this.styleString += componentToInsert.styleString;
             this.scriptString += componentToInsert.scriptString;
-            for (let child of componentToInsert.template.children) {
-                n.appendChild(child);
+            // Slots
+            /**
+             * Algorithm:
+             * - Gather all slots in included template
+             */
+            let slots = componentToInsert.template.getElementsByTagName("slot");
+            if (slots.length === 1) { // normal mode
+                console.log("normal mode");
+                // clear the slot's "fallback content"
+                if (n.children.length > 0) {
+                    slots[0].children = [];
+                }
+                // copy all of n into the slot
+                for (let child of n.children) {
+                    slots[0].appendChild(child);
+                }
+                // clear all children of n
+                n.children = [];
+                // copy all of componentToInsert into n.children
+                for (let child of componentToInsert.template.children) {
+                    n.appendChild(child);
+                }
             }
+            else if (slots.length > 1) { // named mode
+                console.log("named mode");
+            }
+            else { // empty mode
+                console.log("empty mode");
+                // Quitely discard any child elements, then add the template
+                n.children = [];
+                for (let child of componentToInsert.template.children) {
+                    n.appendChild(child);
+                }
+            }
+            // for (let child of componentToInsert.template.children) {
+            //     n.appendChild(child)
+            // }
         }, (n) => {
             if (n.isElement) {
                 // TODO: handle templating on elements
             }
             if (n.isText) {
                 // template.load(n.data, data)
-                console.log("ENTER");
                 let t = new template_1.TemplateParser(n.data);
-                t.load(n.data, data);
+                t.load(n.data, this.data);
                 n.data = t.advance();
             }
             if (n.isComment) {
@@ -103,8 +133,6 @@ class Component {
         // newDir(join(buildPath, "njk"))
         file_1.newDir(path_1.join(buildPath, "style"));
         file_1.newDir(path_1.join(buildPath, "script"));
-        // let mustachePath = join(buildPath, "njk", this.name + ".njk")
-        // writeFileSync(mustachePath, this.template.innerHTML)
         // build style to dist/style folder
         let stylePath = path_1.join(buildPath, "style", this.name + ".css");
         let css = compileStyles(this.style);

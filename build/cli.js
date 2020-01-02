@@ -16,6 +16,7 @@ const app_1 = require("./app");
 const commander = require('commander');
 const program = new commander.Command();
 let baseDir = process.cwd();
+// TODO: use the file in /default instead
 let component = `<template></template>
 
 <style lang="scss">    
@@ -48,9 +49,13 @@ program.command('create <type> <name>')
     switch (type.toLowerCase()) {
         case 'component':
             let dirComponents = path_1.join(baseDir, 'components');
-            console.log("DIRRR", dirComponents);
             file_1.newDir(dirComponents);
             fs_1.writeFileSync(path_1.join(dirComponents, name + ".component"), component);
+            console.log("Created new component in", dirComponents);
+            let dirModels = path_1.join(baseDir, "models");
+            file_1.newDir(dirModels);
+            fs_1.writeFileSync(path_1.join(dirModels, name + ".json"), "{}");
+            console.log("Created new model in", dirModels);
             break;
         case 'controller':
             throw new Error('Controller creation not yet implemented.');
@@ -64,20 +69,11 @@ program.command('create <type> <name>')
 program.command('develop <name>')
     .description('Develop a component using the live server.')
     .action((name) => __awaiter(this, void 0, void 0, function* () {
-    console.log("fuck");
     let framework = new app_1.Framework(baseDir);
     // TODO: get data from a file?
-    let data = {
-        test: "frank",
-        ha: {
-            alpha: "h.alphaaa"
-        }
-    };
-    framework.watch(name, data);
-}));
-program.command('fuck')
-    .action(() => __awaiter(this, void 0, void 0, function* () {
-    console.log("WHAT THE H");
+    let dataString = fs_1.readFileSync(path_1.join(framework.appRoot, "models", `${name}.json`), "utf8");
+    let dataJSON = JSON.parse(dataString);
+    framework.watch(name, path_1.join(framework.appRoot, "models", `${name}.json`));
 }));
 program.parse(process.argv);
 //# sourceMappingURL=cli.js.map

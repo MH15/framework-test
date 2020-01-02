@@ -67,6 +67,7 @@ class Component {
     // Use the template methods to do this shit
     public assemble(data: object, dirSearch: string) {
         this.data = data
+
         let buildSet = new Set<string>()
         buildSet.add(this.name)
         let built = new Set<Component>()
@@ -95,9 +96,6 @@ class Component {
                     return true
                 }
 
-                if (tag == "script") {
-                    console.log("SCRIPT", n)
-                }
             }
             return false
         }, (n) => { // IF
@@ -110,18 +108,56 @@ class Component {
             this.styleString += componentToInsert.styleString
             this.scriptString += componentToInsert.scriptString
 
-            for (let child of componentToInsert.template.children) {
-                n.appendChild(child)
+
+            // Slots
+            /**
+             * Algorithm:
+             * - Gather all slots in included template
+             */
+
+            let slots = componentToInsert.template.getElementsByTagName("slot")
+
+            if (slots.length === 1) { // normal mode
+                console.log("normal mode")
+                // clear the slot's "fallback content"
+                if (n.children.length > 0) {
+                    slots[0].children = []
+                }
+                // copy all of n into the slot
+                for (let child of n.children) {
+                    slots[0].appendChild(child)
+                }
+                // clear all children of n
+                n.children = []
+                // copy all of componentToInsert into n.children
+                for (let child of componentToInsert.template.children) {
+                    n.appendChild(child)
+                }
+            } else if (slots.length > 1) { // named mode
+                console.log("named mode")
+
+            } else { // empty mode
+                console.log("empty mode")
+                // Quitely discard any child elements, then add the template
+                n.children = []
+                for (let child of componentToInsert.template.children) {
+                    n.appendChild(child)
+                }
             }
+
+            // for (let child of componentToInsert.template.children) {
+            //     n.appendChild(child)
+            // }
+
+
         }, (n) => { // ELSE
             if (n.isElement) {
                 // TODO: handle templating on elements
             }
             if (n.isText) {
                 // template.load(n.data, data)
-                console.log("ENTER")
                 let t = new TemplateParser(n.data)
-                t.load(n.data, data)
+                t.load(n.data, this.data)
                 n.data = t.advance()
 
             }

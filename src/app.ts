@@ -75,15 +75,10 @@ class Framework {
      * @param res the server response object
      * @param name name of Component to render
      */
-    render(res: ServerResponse, name: string) {
-        let data = {
-            test: "frank",
-            ha: {
-                alpha: "h.alphaaa"
-            }
-        }
+    render(res: ServerResponse, name: string, data: object) {
+
         let component = this.locateComponent(name)
-        console.log("found:", component)
+        // console.log("found:", component)
         component.assemble(data, this.dirSearch)
         let content = combine(component)
         res.writeHead(200)
@@ -115,7 +110,7 @@ class Framework {
 
     }
 
-    async watch(name: string, data: object) {
+    async watch(name: string, dataPath: string) {
         let pathToComponent = join(this.dirSearch, `${name}.component`)
         let liveServer = new LiveServer(this.developPath)
         await liveServer.start(8081)
@@ -128,7 +123,7 @@ class Framework {
             })
             ws.send('ho!')
             connection = ws
-            buildWatch(data, this.dirOut, this.dirSearch, pathToComponent, connection)
+            buildWatch(dataPath, this.dirOut, this.dirSearch, pathToComponent, connection)
 
         })
     }

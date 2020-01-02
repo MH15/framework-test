@@ -8,12 +8,7 @@ const { Framework } = require("neanderthal")
  */
 global.app = new Framework(__dirname, true)
 
-
-/**
- * Build all components before serving
- */
-app.buildAllComponents()
-
+]
 
 /**
  * Serve your app!

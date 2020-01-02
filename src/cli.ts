@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { join } from "path"
-import { writeFileSync } from "fs"
+import { writeFileSync, readFileSync } from "fs"
 import { newDir } from "./utils/file"
 import { Framework } from "./app"
 
@@ -50,9 +50,14 @@ program.command('create <type> <name>')
         switch (type.toLowerCase()) {
             case 'component':
                 let dirComponents = join(baseDir, 'components')
-                console.log("DIRRR", dirComponents)
                 newDir(dirComponents)
                 writeFileSync(join(dirComponents, name + ".component"), component)
+                console.log("Created new component in", dirComponents)
+
+                let dirModels = join(baseDir, "models")
+                newDir(dirModels)
+                writeFileSync(join(dirModels, name + ".json"), "{}")
+                console.log("Created new model in", dirModels)
                 break
             case 'controller':
                 throw new Error('Controller creation not yet implemented.')
@@ -69,13 +74,9 @@ program.command('develop <name>')
         let framework = new Framework(baseDir)
 
         // TODO: get data from a file?
-        let data = {
-            test: "frank",
-            ha: {
-                alpha: "h.alphaaa"
-            }
-        }
-        framework.watch(name, data)
+        let dataString = readFileSync(join(framework.appRoot, "models", `${name}.json`), "utf8")
+        let dataJSON = JSON.parse(dataString)
+        framework.watch(name, join(framework.appRoot, "models", `${name}.json`))
     })
 
 
