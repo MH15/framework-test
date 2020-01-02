@@ -1,7 +1,5 @@
-<template include="second">
+<template>
     <h1>Home</h1>
-
-    {{> second}}
 </template>
 
 <style lang="scss">

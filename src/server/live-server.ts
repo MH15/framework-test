@@ -8,7 +8,6 @@ import { Server } from "./server"
 import * as fs from "fs"
 
 import * as WebSocket from "ws"
-import Mustache = require("mustache")
 import { resolve } from "dns"
 
 const ejs = require("ejs")
